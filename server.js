@@ -3,27 +3,16 @@ var express = require('express'),
   cookieParser = require('cookie-parser'),
   session = require('express-session'),
   path = require('path'),
-  api = require('./routes/api'),
-  loggly = require('loggly');
-
-logger = loggly.createClient({
-  token: "9dcf1a1b-16a1-4f1d-8b47-1708a768ce10",
-  subdomain: "carlgreen",
-  tags: ['NodeJS'],
-  json:true
-});
+  api = require('./routes/api');
 
 var PathApp = function() {
   this.terminator = function(sig) {
     if (typeof sig === "string") {
         console.log('%s: Received %s - terminating paths app ...',
                 Date(Date.now()), sig);
-        logger.log('%s: Received %s - terminating paths app ...',
-                Date(Date.now()), sig);
         process.exit(1);
     }
     console.log('%s: Node server stopped.', Date(Date.now()));
-    logger.log('%s: Node server stopped.', Date(Date.now()));
   };
 
   this.initialize = function() {
@@ -66,7 +55,6 @@ var PathApp = function() {
     var ip = process.env.OPENSHIFT_NODEJS_IP || "localhost";
     this.app.listen(port, ip, function() {
       console.log("Express server listenting on port " + port);
-      logger.log("Express server listenting on port " + port);
     });
   };
 };
