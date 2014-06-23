@@ -9,7 +9,7 @@
   };
 
   var pathsControllers = angular.module('pathsControllers', []);
-  pathsControllers.controller('PathsController', function($scope, $http) {
+  pathsControllers.controller('PathsController', function($scope, $http, PathsService) {
     $scope.immediateFailed = false;
     $scope.userProfile = undefined;
 
@@ -26,11 +26,13 @@
     var processAuth = function(authResult) {
       if (authResult['access_token']) {
         $scope.immediateFailed = false;
-        $http.post('api/connect', authResult).success(function(data) {
-          signedIn(data);
-        }).error(function(data, status) {
-          console.error('connect error: ' + status);
-        });
+        PathsService.connect(authResult)
+          .success(function(data) {
+            signedIn(data);
+          })
+          .error(function(data, status) {
+            console.error('connect error: ' + status);
+          });
       } else if (authResult['error']) {
         if (authResult['error'] === 'immediate_failed') {
           $scope.immediateFailed = true;
@@ -51,12 +53,14 @@
     };
 
     $scope.disconnect = function() {
-      $http.post('api/disconnect').success(function() {
-        $scope.userProfile = undefined;
-        $scope.immediateFailed = true;
-      }).error(function(data, status) {
-        console.error('disconnect error: ' + status);
-      });
+      PathsService.disconnect()
+        .success(function() {
+          $scope.userProfile = undefined;
+          $scope.immediateFailed = true;
+        })
+        .error(function(data, status) {
+          console.error('disconnect error: ' + status);
+        });
     }
 
     var start = function() {

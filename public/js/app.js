@@ -1,5 +1,5 @@
 (function() {
   'use strict';
 
-  angular.module('paths', ['pathsControllers']);
+  angular.module('paths', ['pathsServices', 'pathsControllers']);
 })();
