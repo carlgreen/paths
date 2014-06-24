@@ -27,9 +27,7 @@
       if (authResult['access_token']) {
         $scope.immediateFailed = false;
         PathsService.connect(authResult)
-          .success(function(data) {
-            signedIn(data);
-          })
+          .success(signedIn)
           .error(function(data, status) {
             console.error('connect error: ' + status);
           });
@@ -52,12 +50,14 @@
       });
     };
 
+    var signedOut = function() {
+      $scope.userProfile = undefined;
+      $scope.immediateFailed = true;
+    };
+
     $scope.disconnect = function() {
       PathsService.disconnect()
-        .success(function() {
-          $scope.userProfile = undefined;
-          $scope.immediateFailed = true;
-        })
+        .success(signedOut)
         .error(function(data, status) {
           console.error('disconnect error: ' + status);
         });
