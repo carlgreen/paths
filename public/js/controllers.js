@@ -24,18 +24,19 @@
     };
 
     var processAuth = function(authResult) {
-      if (authResult['access_token']) {
+      /* jshint camelcase: false */
+      if (authResult.access_token) {
         $scope.immediateFailed = false;
         PathsService.connect(authResult)
           .success(signedIn)
           .error(function(data, status) {
             console.error('connect error: ' + status);
           });
-      } else if (authResult['error']) {
-        if (authResult['error'] === 'immediate_failed') {
+      } else if (authResult.error) {
+        if (authResult.error === 'immediate_failed') {
           $scope.immediateFailed = true;
         } else {
-          console.error('auth error: ' + authResult['error']);
+          console.error('auth error: ' + authResult.error);
         }
       }
     };
@@ -61,7 +62,7 @@
         .error(function(data, status) {
           console.error('disconnect error: ' + status);
         });
-    }
+    };
 
     var start = function() {
       renderSignIn();
