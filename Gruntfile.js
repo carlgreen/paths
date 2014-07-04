@@ -12,6 +12,13 @@ module.exports = function(grunt) {
   grunt.initConfig({
     // Watches files for changes and runs tasks based on the changed files
     watch: {
+      js: {
+        files: ['public/js/{,*/}*.js'],
+        tasks: ['newer:jshint:all'],
+        options: {
+          livereload: true
+        }
+      },
       gruntfile: {
         files: ['Gruntfile.js']
       },
@@ -28,7 +35,7 @@ module.exports = function(grunt) {
           'server.js',
           'routes/**/*.js'
         ],
-        tasks: ['express:dev', 'wait'],
+        tasks: ['newer:jshint:server', 'express:dev', 'wait'],
         options: {
           livereload: true,
           spawn: false //Without this option specified express won't be reloaded
@@ -52,6 +59,23 @@ module.exports = function(grunt) {
       server: {
         url: 'http://localhost:<%= express.options.port %>'
       }
+    },
+
+    // Make sure code styles are up to par and there are no obvious mistakes
+    jshint: {
+      options: {
+        jshintrc: '.jshintrc',
+        reporter: require('jshint-stylish')
+      },
+      server: {
+        options: {
+          jshintrc: '.jshintrc_server'
+        },
+        src: ['server.js', 'routes/{,*/}*.js']
+      },
+      all: [
+        'public/js/{,*/}*.js'
+      ]
     }
   });
 
@@ -71,4 +95,8 @@ module.exports = function(grunt) {
         'watch'
       ]);
   });
+
+  grunt.registerTask('default', [
+    'newer:jshint'
+  ]);
 };
