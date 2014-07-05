@@ -48,6 +48,7 @@ var PathApp = function() {
     this.app.get('/api', api.index);
     this.app.post('/api/connect', api.connect);
     this.app.post('/api/disconnect', api.disconnect);
+    this.app.get('/api/users/:id', api.getUser);
   };
 
   this.start = function() {

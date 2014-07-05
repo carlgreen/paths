@@ -1,5 +1,6 @@
 var googleapis = require('googleapis'),
-  https = require('https');
+  https = require('https'),
+  MongoClient = require('mongodb').MongoClient;
 
 var REDIRECT_URL = 'postmessage';
 var oauth2Client = new googleapis.OAuth2Client(process.env.CLIENT_ID, process.env.CLIENT_SECRET, REDIRECT_URL);
@@ -31,6 +32,18 @@ function exchangeCode(code, res, successCallback) {
   });
 }
 
+function updateUser(profile, callback) {
+  // TODO need to close this connection
+  MongoClient.connect('mongodb://localhost:27017/paths', function(err, db) {
+    if (err) {
+      callback(err, null);
+    }
+    profile._id = profile.id;
+    delete profile.id;
+    db.collection('users').findAndModify({"_id": profile._id}, null, profile, {upsert: true, new: true}, callback);
+  });
+}
+
 exports.connect = function(req, res) {
   if ('user_id' in req.session) {
     return res.json(200, {"id": req.session.user_id});
@@ -43,7 +56,12 @@ exports.connect = function(req, res) {
   if ('code' in connectCredentials) {
     exchangeCode(connectCredentials.code, res, function(profile) {
       req.session.user_id = profile.id;
-      return res.json(200, profile);
+      updateUser(profile, function(err, user) {
+        if (err) {
+          return res.json(500, {name: err.name, msg: err.message});
+        }
+        return res.json(200, {"id": req.session.user_id});
+      });
     });
   } else if ('access_token' in connectCredentials) {
     return res.json(500, {error: 'access_token not supported'});
@@ -63,5 +81,24 @@ exports.disconnect = function(req, res) {
     res.send(200);
   }).on('error', function(e) {
     return res.json(401, {error: 'Failed to revoke access'});
+  });
+};
+
+exports.getUser = function(req, res) {
+  var id = req.params.id;
+  // TODO need to close this connection
+  MongoClient.connect('mongodb://localhost:27017/paths', function(err, db) {
+    if (err) {
+      return res.json(500, {name: err.name, msg: err.message});
+    }
+    db.collection('users').findOne({"_id": id}, function(err, user) {
+      if (err) {
+        return res.json(500, {name: err.name, msg: err.message});
+      }
+      if (user === null) {
+        return res.json(404, {msg: 'no user found for ' + id});
+      }
+      return res.json(200, user);
+    });
   });
 };
