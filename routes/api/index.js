@@ -46,7 +46,7 @@ function updateUser(profile, callback) {
   // TODO need to close this connection
   MongoClient.connect(mongo_connection_string, function(err, db) {
     if (err) {
-      callback(err, null);
+      return callback(err, null);
     }
     profile._id = profile.id;
     delete profile.id;
