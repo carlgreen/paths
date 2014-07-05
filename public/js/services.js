@@ -15,4 +15,14 @@
 
     return service;
   });
+
+  pathsServices.service('UsersService', function($http) {
+    var service = {};
+
+    service.getUser = function(id) {
+      return $http.get('api/users/' + id);
+    };
+
+    return service;
+  });
 })();

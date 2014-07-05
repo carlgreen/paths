@@ -9,7 +9,7 @@
   };
 
   var pathsControllers = angular.module('pathsControllers', []);
-  pathsControllers.controller('PathsController', function($scope, $http, PathsService) {
+  pathsControllers.controller('PathsController', function($scope, $http, UsersService, PathsService) {
     $scope.immediateFailed = false;
     $scope.userProfile = undefined;
 
@@ -20,7 +20,15 @@
     };
 
     var signedIn = function(profile) {
-      $scope.userProfile = profile;
+      UsersService.getUser(profile.id)
+        .then(function(response) {
+          $scope.userProfile = response.data;
+        })
+        .catch(function(response) {
+          $scope.userProfile = null;
+          console.error('Could not get user: ' + response.status);
+          console.info(response.data);
+        });
     };
 
     var processAuth = function(authResult) {
