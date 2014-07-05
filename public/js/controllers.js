@@ -9,7 +9,7 @@
   };
 
   var pathsControllers = angular.module('pathsControllers', []);
-  pathsControllers.controller('PathsController', function($scope, $http, UsersService, PathsService) {
+  pathsControllers.controller('PathsController', function($scope, UsersService, PathsService) {
     $scope.immediateFailed = false;
     $scope.userProfile = undefined;
 
