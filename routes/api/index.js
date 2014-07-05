@@ -5,6 +5,16 @@ var googleapis = require('googleapis'),
 var REDIRECT_URL = 'postmessage';
 var oauth2Client = new googleapis.OAuth2Client(process.env.CLIENT_ID, process.env.CLIENT_SECRET, REDIRECT_URL);
 
+var mongo_connection_string = 'mongodb://localhost:27017/paths';
+if (process.env.OPENSHIFT_MONGODB_DB_PASSWORD) {
+  mongo_connection_string = 'mongodb://' +
+      process.env.OPENSHIFT_MONGODB_DB_USERNAME + ":" +
+      process.env.OPENSHIFT_MONGODB_DB_PASSWORD + "@" +
+      process.env.OPENSHIFT_MONGODB_DB_HOST + ':' +
+      process.env.OPENSHIFT_MONGODB_DB_PORT + '/' +
+      process.env.OPENSHIFT_APP_NAME;
+}
+
 exports.index = function(req, res) {
   res.writeHead(200, {'Content-Type': 'text/plain'});
   res.end('Hello World\n');
@@ -34,7 +44,7 @@ function exchangeCode(code, res, successCallback) {
 
 function updateUser(profile, callback) {
   // TODO need to close this connection
-  MongoClient.connect('mongodb://localhost:27017/paths', function(err, db) {
+  MongoClient.connect(mongo_connection_string, function(err, db) {
     if (err) {
       callback(err, null);
     }
@@ -87,7 +97,7 @@ exports.disconnect = function(req, res) {
 exports.getUser = function(req, res) {
   var id = req.params.id;
   // TODO need to close this connection
-  MongoClient.connect('mongodb://localhost:27017/paths', function(err, db) {
+  MongoClient.connect(mongo_connection_string, function(err, db) {
     if (err) {
       return res.json(500, {name: err.name, msg: err.message});
     }
