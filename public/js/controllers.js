@@ -15,30 +15,31 @@
 
     var signIn = function(authResult) {
       $scope.$apply(function() {
-        processAuth(authResult);
+        $scope.processAuth(authResult);
       });
     };
 
-    var signedIn = function(profile) {
+    $scope.signedIn = function(response) {
+      var profile = response.data;
       UsersService.getUser(profile.id)
         .then(function(response) {
           $scope.userProfile = response.data;
         })
         .catch(function(response) {
-          $scope.userProfile = null;
+          $scope.userProfile = undefined;
           console.error('Could not get user: ' + response.status);
           console.info(response.data);
         });
     };
 
-    var processAuth = function(authResult) {
+    $scope.processAuth = function(authResult) {
       /* jshint camelcase: false */
       if (authResult.access_token) {
         $scope.immediateFailed = false;
         PathsService.connect(authResult)
-          .success(signedIn)
-          .error(function(data, status) {
-            console.error('connect error: ' + status);
+          .then($scope.signedIn)
+          .catch(function(response) {
+            console.error('connect error: ' + response.status);
           });
       } else if (authResult.error) {
         if (authResult.error === 'immediate_failed') {
@@ -66,9 +67,9 @@
 
     $scope.disconnect = function() {
       PathsService.disconnect()
-        .success(signedOut)
-        .error(function(data, status) {
-          console.error('disconnect error: ' + status);
+        .then(signedOut)
+        .catch(function(response) {
+          console.error('disconnect error: ' + response.status);
         });
     };
 

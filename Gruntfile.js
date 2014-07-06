@@ -19,6 +19,10 @@ module.exports = function(grunt) {
           livereload: true
         }
       },
+      jsTest: {
+        files: ['test/client/spec/{,*/}*.js'],
+        tasks: ['newer:jshint:test', 'karma']
+      },
       gruntfile: {
         files: ['Gruntfile.js']
       },
@@ -75,7 +79,20 @@ module.exports = function(grunt) {
       },
       all: [
         'public/js/{,*/}*.js'
-      ]
+      ],
+      test: {
+        options: {
+          jshintrc: 'test/client/.jshintrc'
+        },
+      src: ['test/client/spec/{,*/}*.js']
+      }
+    },
+
+    karma: {
+      unit: {
+        configFile: 'test/karma.conf.js',
+        singleRun: true
+      }
     }
   });
 
@@ -96,7 +113,20 @@ module.exports = function(grunt) {
       ]);
   });
 
+  grunt.registerTask('test', function(target) {
+    if (target === 'client') {
+      return grunt.task.run([
+        'karma'
+      ]);
+    } else {
+      grunt.task.run([
+        'test:client'
+      ]);
+    }
+  });
+
   grunt.registerTask('default', [
-    'newer:jshint'
+    'newer:jshint',
+    'test'
   ]);
 };
