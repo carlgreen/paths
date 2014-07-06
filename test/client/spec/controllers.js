@@ -22,14 +22,14 @@ describe('Controller: PathsController', function () {
     scope = $rootScope.$new();
     queryDeferred = undefined;
     usersService = {
-      getUser: function(id) {
+      getUser: function(/*id*/) {
         queryDeferred = $q.defer();
         return queryDeferred.promise;
       }
     };
     spyOn(usersService, 'getUser').andCallThrough();
     pathsService = {
-      connect: function(authResult) {
+      connect: function(/*authResult*/) {
         queryDeferred = $q.defer();
         return queryDeferred.promise;
       },
@@ -73,10 +73,10 @@ describe('Controller: PathsController', function () {
   });
 
   it('should call PathsService.connect when processAuth has an access token', function() {
-    scope.processAuth({access_token: 'abc'});
+    scope.processAuth({'access_token': 'abc'});
 
     expect(scope.immediateFailed).toBe(false);
-    expect(pathsService.connect).toHaveBeenCalledWith({access_token: 'abc'});
+    expect(pathsService.connect).toHaveBeenCalledWith({'access_token': 'abc'});
   });
 
   it('should call PathsService.connect when processAuth has an access token', function() {
