@@ -115,5 +115,20 @@ exports.getUser = function(req, res) {
 
 exports.removeUser = function(req, res) {
   var id = req.params.id;
-  // TODO
+  // TODO need to close this connection
+  MongoClient.connect(mongo_connection_string, function(err, db) {
+    if (err) {
+      return res.json(500, {name: err.name, msg: err.message});
+    }
+    db.collection('users').remove({"_id": id}, function(err, numRemoved) {
+      if (err) {
+        return res.json(500, {name: err.name, msg: err.message});
+      }
+      if (numRemoved === 0) {
+        return res.json(404, {msg: 'no user found for ' + id});
+      }
+      console.log('removed ' + numRemoved + ' for id ' + id);
+      return res.json(204);
+    });
+  });
 };
