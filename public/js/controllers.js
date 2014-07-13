@@ -72,7 +72,7 @@
         .catch(function(response) {
           console.error('disconnect error: ' + response.status);
         });
-      UsersService.removeUser(13)
+      UsersService.removeUser($scope.userProfile._id)
         .catch(function(response) {
           console.error('disconnect error: ' + response.status);
         });
