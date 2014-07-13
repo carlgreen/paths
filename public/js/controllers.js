@@ -66,8 +66,13 @@
     };
 
     $scope.disconnect = function() {
+      // TODO how do I chain these?
       PathsService.disconnect()
         .then(signedOut)
+        .catch(function(response) {
+          console.error('disconnect error: ' + response.status);
+        });
+      UsersService.removeUser(13)
         .catch(function(response) {
           console.error('disconnect error: ' + response.status);
         });

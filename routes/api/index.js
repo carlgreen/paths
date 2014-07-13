@@ -112,3 +112,8 @@ exports.getUser = function(req, res) {
     });
   });
 };
+
+exports.removeUser = function(req, res) {
+  var id = req.params.id;
+  // TODO
+};

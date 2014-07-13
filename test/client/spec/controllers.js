@@ -12,7 +12,8 @@ describe('Controller: PathsController', function () {
     $q,
     $rootScope,
     $httpBackend,
-    queryDeferred;
+    queryDeferred,
+    removeUserQ;
 
   // Initialize the controller and a mock scope
   beforeEach(inject(function (_$q_, _$rootScope_, _$httpBackend_, $controller) {
@@ -21,13 +22,19 @@ describe('Controller: PathsController', function () {
     $httpBackend = _$httpBackend_;
     scope = $rootScope.$new();
     queryDeferred = undefined;
+    removeUserQ = undefined;
     usersService = {
       getUser: function(/*id*/) {
         queryDeferred = $q.defer();
         return queryDeferred.promise;
+      },
+      removeUser: function() {
+        removeUserQ = $q.defer();
+        return removeUserQ.promise;
       }
     };
     spyOn(usersService, 'getUser').andCallThrough();
+    spyOn(usersService, 'removeUser').andCallThrough();
     pathsService = {
       connect: function(/*authResult*/) {
         queryDeferred = $q.defer();
@@ -98,5 +105,17 @@ describe('Controller: PathsController', function () {
     expect(scope.immediateFailed).toBe(true);
     expect(scope.userProfile).toBe(undefined);
     expect(pathsService.disconnect).toHaveBeenCalled();
+  });
+
+  it('should call UsersService.removeUser when disconnect is called', function() {
+    scope.userProfile = {id: 13};
+    scope.immediateFailed = false;
+
+    scope.disconnect();
+
+    removeUserQ.resolve({status: 204});
+    $rootScope.$apply();
+
+    expect(usersService.removeUser).toHaveBeenCalledWith(13);
   });
 });

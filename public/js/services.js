@@ -23,6 +23,10 @@
       return $http.get('api/users/' + id);
     };
 
+    service.removeUser = function(id) {
+      return $http.delete('api/users/' + id);
+    };
+
     return service;
   });
 })();
