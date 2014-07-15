@@ -108,7 +108,7 @@ describe('Controller: PathsController', function () {
   });
 
   it('should call UsersService.removeUser when disconnect is called', function() {
-    scope.userProfile = {id: 13};
+    scope.userProfile = {_id: 13};
     scope.immediateFailed = false;
 
     scope.disconnect();
