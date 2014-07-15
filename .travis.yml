@@ -2,3 +2,4 @@ language: node_js
 node_js:
   - "0.10"
 before_install: npm install -g grunt-cli
+after_script: "npm install coveralls@2.11.1 && cat ./coverage/*/lcov.info | coveralls"
