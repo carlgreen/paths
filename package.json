@@ -30,5 +30,8 @@
     "karma-phantomjs-launcher": "~0.1.4",
     "load-grunt-tasks": "~0.6.0",
     "time-grunt": "~0.3.2"
+  },
+  "scripts": {
+    "test": "grunt test"
   }
 }
