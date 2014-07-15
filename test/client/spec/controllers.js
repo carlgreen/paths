@@ -93,29 +93,19 @@ describe('Controller: PathsController', function () {
     expect(pathsService.connect).not.toHaveBeenCalled();
   });
 
-  it('should call PathsService.disconnect when disconnect is called', function() {
-    scope.userProfile = {id: 13};
-    scope.immediateFailed = false;
-
-    scope.disconnect();
-
-    queryDeferred.resolve({status: 200});
-    $rootScope.$apply();
-
-    expect(scope.immediateFailed).toBe(true);
-    expect(scope.userProfile).toBe(undefined);
-    expect(pathsService.disconnect).toHaveBeenCalled();
-  });
-
-  it('should call UsersService.removeUser when disconnect is called', function() {
+  it('should call PathsService.disconnect and UsersService.removeUser when disconnect is called', function() {
     scope.userProfile = {_id: 13};
     scope.immediateFailed = false;
 
     scope.disconnect();
 
+    queryDeferred.resolve({status: 200});
     removeUserQ.resolve({status: 204});
     $rootScope.$apply();
 
+    expect(scope.immediateFailed).toBe(true);
+    expect(scope.userProfile).toBe(undefined);
+    expect(pathsService.disconnect).toHaveBeenCalled();
     expect(usersService.removeUser).toHaveBeenCalledWith(13);
   });
 });
