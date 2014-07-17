@@ -100,12 +100,46 @@ describe('Controller: PathsController', function () {
     scope.disconnect();
 
     queryDeferred.resolve({status: 200});
+    $rootScope.$apply();
     removeUserQ.resolve({status: 204});
     $rootScope.$apply();
 
-    expect(scope.immediateFailed).toBe(true);
-    expect(scope.userProfile).toBe(undefined);
     expect(pathsService.disconnect).toHaveBeenCalled();
     expect(usersService.removeUser).toHaveBeenCalledWith(13);
+    expect(scope.immediateFailed).toBe(true);
+    expect(scope.userProfile).toBeUndefined();
+  });
+
+  it('should not call UsersService.removeUser when PathsService.disconnect errors', function() {
+    scope.userProfile = {_id: 13};
+    scope.immediateFailed = false;
+
+    scope.disconnect();
+
+    queryDeferred.reject({status: 500});
+    $rootScope.$apply();
+
+    expect(pathsService.disconnect).toHaveBeenCalled();
+    expect(removeUserQ).toBeUndefined();
+    expect(usersService.removeUser).not.toHaveBeenCalled();
+    expect(scope.immediateFailed).toBe(false);
+    expect(scope.userProfile).toBeDefined();
+  });
+
+  it('should not call clear scope when usersService.removeUser errors', function() {
+    scope.userProfile = {_id: 13};
+    scope.immediateFailed = false;
+
+    scope.disconnect();
+
+    queryDeferred.resolve({status: 200});
+    $rootScope.$apply();
+    removeUserQ.reject({status: 500});
+    $rootScope.$apply();
+
+    expect(pathsService.disconnect).toHaveBeenCalled();
+    expect(usersService.removeUser).toHaveBeenCalled();
+    expect(scope.immediateFailed).toBe(false);
+    expect(scope.userProfile).toBeDefined();
   });
 });

@@ -65,14 +65,14 @@
       $scope.immediateFailed = true;
     };
 
+    var removeUser = function() {
+      return UsersService.removeUser($scope.userProfile._id);
+    };
+
     $scope.disconnect = function() {
-      // TODO how do I chain these?
       PathsService.disconnect()
+        .then(removeUser)
         .then(signedOut)
-        .catch(function(response) {
-          console.error('disconnect error: ' + response.status);
-        });
-      UsersService.removeUser($scope.userProfile._id)
         .catch(function(response) {
           console.error('disconnect error: ' + response.status);
         });
