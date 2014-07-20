@@ -5,26 +5,33 @@
   pathsServices.service('PathsService', function($http) {
     var service = {};
 
-    service.connect = function(authResult) {
+    var connect = function(authResult) {
       return $http.post('api/connect', authResult);
     };
 
-    service.disconnect = function() {
-      return $http.post('api/disconnect');
-    };
-
-    return service;
-  });
-
-  pathsServices.service('UsersService', function($http) {
-    var service = {};
-
-    service.getUser = function(id) {
+    var getUser = function(response) {
+      var id = response.data.id;
       return $http.get('api/users/' + id);
     };
 
-    service.removeUser = function(id) {
+    service.connect = function(authResult) {
+      return connect(authResult)
+        .then(getUser);
+    };
+
+    var disconnect = function() {
+      return $http.post('api/disconnect');
+    };
+
+    var deleteUser = function(id) {
       return $http.delete('api/users/' + id);
+    };
+
+    service.disconnect = function(id) {
+      return disconnect()
+        .then(function() {
+          return deleteUser(id);
+        });
     };
 
     return service;

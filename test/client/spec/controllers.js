@@ -7,13 +7,11 @@ describe('Controller: PathsController', function () {
 
   var PathsController,
     scope,
-    usersService,
     pathsService,
     $q,
     $rootScope,
     $httpBackend,
-    queryDeferred,
-    removeUserQ;
+    queryDeferred;
 
   // Initialize the controller and a mock scope
   beforeEach(inject(function (_$q_, _$rootScope_, _$httpBackend_, $controller) {
@@ -22,19 +20,6 @@ describe('Controller: PathsController', function () {
     $httpBackend = _$httpBackend_;
     scope = $rootScope.$new();
     queryDeferred = undefined;
-    removeUserQ = undefined;
-    usersService = {
-      getUser: function(/*id*/) {
-        queryDeferred = $q.defer();
-        return queryDeferred.promise;
-      },
-      removeUser: function() {
-        removeUserQ = $q.defer();
-        return removeUserQ.promise;
-      }
-    };
-    spyOn(usersService, 'getUser').andCallThrough();
-    spyOn(usersService, 'removeUser').andCallThrough();
     pathsService = {
       connect: function(/*authResult*/) {
         queryDeferred = $q.defer();
@@ -50,7 +35,6 @@ describe('Controller: PathsController', function () {
 
     PathsController = $controller('PathsController', {
       $scope: scope,
-      UsersService: usersService,
       PathsService: pathsService
     });
   }));
@@ -59,21 +43,24 @@ describe('Controller: PathsController', function () {
     expect(PathsController).toBeDefined();
   });
 
-  it('should attach the result of UsersService.getUser to the scope', function () {
+  it('should attach the result of connect to the scope', function () {
+    /* jshint camelcase: false */
     expect(scope.userProfile).toBeUndefined();
 
-    scope.signedIn({data: {id: 13}});
+    scope.processAuth({access_token: 'abc123'});
 
-    queryDeferred.resolve({status: 200, data: 'xyz'});
+    queryDeferred.resolve({data: 'xyz'});
     $rootScope.$apply();
 
+    expect(pathsService.connect).toHaveBeenCalledWith({access_token: 'abc123'});
     expect(scope.userProfile).toBe('xyz');
   });
 
-  it('should not set the user profile when UsersService.getUser is in error', function () {
-    scope.signedIn({data: {id: 13}});
+  it('should not set the user profile when connect fails', function () {
+    /* jshint camelcase: false */
+    scope.processAuth({access_token: 'abc123'});
 
-    queryDeferred.reject({status: 500, data: 'xyz'});
+    queryDeferred.reject({status: 500});
     $rootScope.$apply();
 
     expect(scope.userProfile).toBeUndefined();
@@ -93,24 +80,21 @@ describe('Controller: PathsController', function () {
     expect(pathsService.connect).not.toHaveBeenCalled();
   });
 
-  it('should call PathsService.disconnect and UsersService.removeUser when disconnect is called', function() {
+  it('should clear scope when disconnect succeeds', function() {
     scope.userProfile = {_id: 13};
     scope.immediateFailed = false;
 
     scope.disconnect();
 
-    queryDeferred.resolve({status: 200});
-    $rootScope.$apply();
-    removeUserQ.resolve({status: 204});
+    queryDeferred.resolve();
     $rootScope.$apply();
 
-    expect(pathsService.disconnect).toHaveBeenCalled();
-    expect(usersService.removeUser).toHaveBeenCalledWith(13);
+    expect(pathsService.disconnect).toHaveBeenCalledWith(13);
     expect(scope.immediateFailed).toBe(true);
     expect(scope.userProfile).toBeUndefined();
   });
 
-  it('should not call UsersService.removeUser when PathsService.disconnect errors', function() {
+  it('should not clear scope when disconnect fails', function() {
     scope.userProfile = {_id: 13};
     scope.immediateFailed = false;
 
@@ -119,26 +103,7 @@ describe('Controller: PathsController', function () {
     queryDeferred.reject({status: 500});
     $rootScope.$apply();
 
-    expect(pathsService.disconnect).toHaveBeenCalled();
-    expect(removeUserQ).toBeUndefined();
-    expect(usersService.removeUser).not.toHaveBeenCalled();
-    expect(scope.immediateFailed).toBe(false);
-    expect(scope.userProfile).toBeDefined();
-  });
-
-  it('should not call clear scope when usersService.removeUser errors', function() {
-    scope.userProfile = {_id: 13};
-    scope.immediateFailed = false;
-
-    scope.disconnect();
-
-    queryDeferred.resolve({status: 200});
-    $rootScope.$apply();
-    removeUserQ.reject({status: 500});
-    $rootScope.$apply();
-
-    expect(pathsService.disconnect).toHaveBeenCalled();
-    expect(usersService.removeUser).toHaveBeenCalled();
+    expect(pathsService.disconnect).toHaveBeenCalledWith(13);
     expect(scope.immediateFailed).toBe(false);
     expect(scope.userProfile).toBeDefined();
   });

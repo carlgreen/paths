@@ -9,7 +9,7 @@
   };
 
   var pathsControllers = angular.module('pathsControllers', []);
-  pathsControllers.controller('PathsController', function($scope, UsersService, PathsService) {
+  pathsControllers.controller('PathsController', function($scope, PathsService) {
     $scope.immediateFailed = false;
     $scope.userProfile = undefined;
 
@@ -19,17 +19,8 @@
       });
     };
 
-    $scope.signedIn = function(response) {
-      var profile = response.data;
-      UsersService.getUser(profile.id)
-        .then(function(response) {
-          $scope.userProfile = response.data;
-        })
-        .catch(function(response) {
-          $scope.userProfile = undefined;
-          console.error('Could not get user: ' + response.status);
-          console.info(response.data);
-        });
+    var signedIn = function(response) {
+      $scope.userProfile = response.data;
     };
 
     $scope.processAuth = function(authResult) {
@@ -37,9 +28,10 @@
       if (authResult.access_token) {
         $scope.immediateFailed = false;
         PathsService.connect(authResult)
-          .then($scope.signedIn)
+          .then(signedIn)
           .catch(function(response) {
             console.error('connect error: ' + response.status);
+            console.info(response.data);
           });
       } else if (authResult.error) {
         if (authResult.error === 'immediate_failed') {
@@ -65,13 +57,8 @@
       $scope.immediateFailed = true;
     };
 
-    var removeUser = function() {
-      return UsersService.removeUser($scope.userProfile._id);
-    };
-
     $scope.disconnect = function() {
-      PathsService.disconnect()
-        .then(removeUser)
+      PathsService.disconnect($scope.userProfile._id)
         .then(signedOut)
         .catch(function(response) {
           console.error('disconnect error: ' + response.status);
