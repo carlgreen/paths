@@ -32,6 +32,7 @@
           .catch(function(response) {
             console.error('connect error: ' + response.status);
             console.info(response.data);
+            signedOut();
           });
       } else if (authResult.error) {
         if (authResult.error === 'immediate_failed') {
