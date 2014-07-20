@@ -8,7 +8,7 @@
     <div data-ng-controller="PathsController">
       <span id="myGsignin" data-ng-show="immediateFailed"></span>
       <span data-ng-show="userProfile">
-        {{userProfile}}
+        <a href="{{userProfile.link}}">{{userProfile.name}}</a>
         <button data-ng-click="disconnect()">Disconnect</button>
       </span>
     </div>
