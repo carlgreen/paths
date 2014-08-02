@@ -33,6 +33,7 @@
     "load-grunt-tasks": "~0.6.0",
     "time-grunt": "~0.3.2",
     "should": "~4.0.4",
+    "sinon": "~1.10.3",
     "supertest": "~0.13.0"
   },
   "scripts": {

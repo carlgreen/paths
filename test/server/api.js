@@ -4,7 +4,7 @@ var should = require('should'),
     express = require('express'),
     api = require('../../routes/api'),
     request = require('supertest'),
-    MongoClient = require('mongodb').MongoClient;
+    sinon = require('sinon');
 
 var app = express();
 
@@ -12,12 +12,15 @@ app.get('/api/users/:id', api.getUser);
 
 describe('GET /api/users/:id', function() {
 
-  before(function(done) {
-    MongoClient.connect('mongodb://localhost:27017/paths', function(err, db) {
-      if (err) return done(err);
-      api.connectDb(db);
-      done();
-    });
+  before(function() {
+    var collection = {};
+    collection.findOne = sinon.stub();
+    collection.findOne.withArgs(sinon.match({_id: '13'}), sinon.match.func).yieldsAsync(null, {_id: 13, name: 'test user'});
+    collection.findOne.withArgs(sinon.match.object, sinon.match.func).yieldsAsync(null, null);
+    var db = {};
+    db.collection = sinon.stub();
+    db.collection.returns(collection);
+    api.connectDb(db);
   });
 
   it('should respond with user object', function(done) {
