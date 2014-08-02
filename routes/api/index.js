@@ -1,19 +1,14 @@
 var googleapis = require('googleapis'),
-  https = require('https'),
-  MongoClient = require('mongodb').MongoClient;
+  https = require('https');
 
 var REDIRECT_URL = 'postmessage';
 var oauth2Client = new googleapis.OAuth2Client(process.env.CLIENT_ID, process.env.CLIENT_SECRET, REDIRECT_URL);
 
-var mongo_connection_string = 'mongodb://localhost:27017/paths';
-if (process.env.OPENSHIFT_MONGODB_DB_PASSWORD) {
-  mongo_connection_string = 'mongodb://' +
-      process.env.OPENSHIFT_MONGODB_DB_USERNAME + ":" +
-      process.env.OPENSHIFT_MONGODB_DB_PASSWORD + "@" +
-      process.env.OPENSHIFT_MONGODB_DB_HOST + ':' +
-      process.env.OPENSHIFT_MONGODB_DB_PORT + '/' +
-      process.env.OPENSHIFT_APP_NAME;
-}
+var db;
+
+exports.connectDb = function(connection) {
+  db = connection;
+};
 
 exports.index = function(req, res) {
   res.writeHead(200, {'Content-Type': 'text/plain'});
@@ -43,15 +38,9 @@ function exchangeCode(code, res, successCallback) {
 }
 
 function updateUser(profile, callback) {
-  // TODO need to close this connection
-  MongoClient.connect(mongo_connection_string, function(err, db) {
-    if (err) {
-      return callback(err, null);
-    }
-    profile._id = profile.id;
-    delete profile.id;
-    db.collection('users').findAndModify({"_id": profile._id}, null, profile, {upsert: true, new: true}, callback);
-  });
+  profile._id = profile.id;
+  delete profile.id;
+  db.collection('users').findAndModify({"_id": profile._id}, null, profile, {upsert: true, new: true}, callback);
 }
 
 exports.connect = function(req, res) {
@@ -96,39 +85,27 @@ exports.disconnect = function(req, res) {
 
 exports.getUser = function(req, res) {
   var id = req.params.id;
-  // TODO need to close this connection
-  MongoClient.connect(mongo_connection_string, function(err, db) {
+  db.collection('users').findOne({"_id": id}, function(err, user) {
     if (err) {
       return res.json(500, {name: err.name, msg: err.message});
     }
-    db.collection('users').findOne({"_id": id}, function(err, user) {
-      if (err) {
-        return res.json(500, {name: err.name, msg: err.message});
-      }
-      if (user === null) {
-        return res.json(404, {msg: 'no user found for ' + id});
-      }
-      return res.json(200, user);
-    });
+    if (user === null) {
+      return res.json(404, {msg: 'no user found for ' + id});
+    }
+    return res.json(200, user);
   });
 };
 
 exports.removeUser = function(req, res) {
   var id = req.params.id;
-  // TODO need to close this connection
-  MongoClient.connect(mongo_connection_string, function(err, db) {
+  db.collection('users').remove({"_id": id}, function(err, numRemoved) {
     if (err) {
       return res.json(500, {name: err.name, msg: err.message});
     }
-    db.collection('users').remove({"_id": id}, function(err, numRemoved) {
-      if (err) {
-        return res.json(500, {name: err.name, msg: err.message});
-      }
-      if (numRemoved === 0) {
-        return res.json(404, {msg: 'no user found for ' + id});
-      }
-      console.log('removed ' + numRemoved + ' for id ' + id);
-      return res.json(204);
-    });
+    if (numRemoved === 0) {
+      return res.json(404, {msg: 'no user found for ' + id});
+    }
+    console.log('removed ' + numRemoved + ' for id ' + id);
+    return res.json(204);
   });
 };

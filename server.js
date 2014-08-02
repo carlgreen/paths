@@ -3,6 +3,7 @@ var express = require('express'),
   cookieParser = require('cookie-parser'),
   session = require('express-session'),
   path = require('path'),
+  MongoClient = require('mongodb').MongoClient,
   api = require('./routes/api');
 
 var PathApp = function() {
@@ -44,6 +45,21 @@ var PathApp = function() {
     this.app.use(session({secret: process.env.SESSION_SECRET}));
     this.app.set('port', process.env.OPENSHIFT_NODEJS_PORT || 1337);
     this.app.use(express.static(path.join(__dirname, 'public')));
+
+    var mongo_connection_string = 'mongodb://localhost:27017/paths';
+    if (process.env.OPENSHIFT_MONGODB_DB_PASSWORD) {
+      mongo_connection_string = 'mongodb://' +
+          process.env.OPENSHIFT_MONGODB_DB_USERNAME + ":" +
+          process.env.OPENSHIFT_MONGODB_DB_PASSWORD + "@" +
+          process.env.OPENSHIFT_MONGODB_DB_HOST + ':' +
+          process.env.OPENSHIFT_MONGODB_DB_PORT + '/' +
+          process.env.OPENSHIFT_APP_NAME;
+    }
+    MongoClient.connect(mongo_connection_string, function(err, db) {
+      if (err) throw err;
+      console.log("connected to " + mongo_connection_string);
+      api.connectDb(db);
+    });
 
     this.app.get('/api', api.index);
     this.app.post('/api/connect', api.connect);
