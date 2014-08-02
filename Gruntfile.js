@@ -104,6 +104,15 @@ module.exports = function(grunt) {
         reporter: 'spec'
       },
       src: ['test/server/**/*.js']
+    },
+
+    mochacov: {
+      options: {
+        instrument: true,
+        reporter: 'mocha-lcov-reporter',
+        output: 'coverage/mocha/lcov.info'
+      },
+      server: ['test/server/**/*.js']
     }
   });
 
@@ -127,7 +136,8 @@ module.exports = function(grunt) {
   grunt.registerTask('test', function(target) {
     if (target === 'server') {
       return grunt.task.run([
-        'mochaTest'
+        'mochaTest',
+        'mochacov'
       ]);
     }
     if (target === 'client') {

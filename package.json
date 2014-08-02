@@ -20,6 +20,7 @@
     "grunt-contrib-watch": "~0.6.1",
     "grunt-express-server": "~0.4.17",
     "grunt-karma": "~0.8.0",
+    "grunt-mocha-cov": "~0.2.1",
     "grunt-mocha-test": "~0.11.0",
     "grunt-newer": "~0.5.4",
     "grunt-open": "~0.2.0",
@@ -36,5 +37,12 @@
   },
   "scripts": {
     "test": "grunt test"
+  },
+  "config": {
+    "blanket": {
+      "pattern": [
+        "routes"
+      ]
+    }
   }
 }
