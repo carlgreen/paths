@@ -19,6 +19,10 @@ module.exports = function(grunt) {
           livereload: true
         }
       },
+      mochaTest: {
+        files: ['test/server/{,*/}*.js'],
+        tasks: [/*'env:test', */'newer:jshint:test', 'mochaTest']
+      },
       jsTest: {
         files: ['test/client/spec/{,*/}*.js'],
         tasks: ['newer:jshint:test', 'karma']
@@ -84,7 +88,7 @@ module.exports = function(grunt) {
         options: {
           jshintrc: 'test/client/.jshintrc'
         },
-      src: ['test/client/spec/{,*/}*.js']
+        src: ['test/*/spec/{,*/}*.js']
       }
     },
 
@@ -93,6 +97,13 @@ module.exports = function(grunt) {
         configFile: 'test/karma.conf.js',
         singleRun: true
       }
+    },
+
+    mochaTest: {
+      options: {
+        reporter: 'spec'
+      },
+      src: ['test/server/**/*.js']
     }
   });
 
@@ -114,12 +125,18 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask('test', function(target) {
+    if (target === 'server') {
+      return grunt.task.run([
+        'mochaTest'
+      ]);
+    }
     if (target === 'client') {
       return grunt.task.run([
         'karma'
       ]);
     } else {
       grunt.task.run([
+        'test:server',
         'test:client'
       ]);
     }
