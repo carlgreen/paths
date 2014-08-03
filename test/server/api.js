@@ -34,4 +34,12 @@ describe('GET /api/users/:id', function() {
         done();
       });
   });
+
+  it('should return 404 for non-existant user', function(done) {
+    request(app)
+      .get('/api/users/7')
+      .expect(404)
+      .expect('Content-Type', /json/)
+      .end(done);
+  });
 });
