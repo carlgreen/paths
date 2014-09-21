@@ -106,6 +106,6 @@ exports.removeUser = function(req, res) {
       return res.json(404, {msg: 'no user found for ' + id});
     }
     console.log('removed ' + numRemoved + ' for id ' + id);
-    return res.json(204);
+    return res.status(204).end();
   });
 };
