@@ -2,14 +2,21 @@
 
 var should = require('should'),
     express = require('express'),
+    bodyParser = require('body-parser'),
+    cookieParser = require('cookie-parser'),
+    session = require('express-session'),
     api = require('../../routes/api'),
     request = require('supertest'),
     sinon = require('sinon');
 
 var app = express();
+app.use(bodyParser());
+app.use(cookieParser());
+app.use(session({secret: 'so secret'}));
 
 app.get('/api/users/:id', api.getUser);
 app.delete('/api/users/:id', api.removeUser);
+app.post('/api/connect', api.connect);
 
 describe('GET /api/users/:id', function() {
 
@@ -74,5 +81,46 @@ describe('DELETE /api/users/:id', function() {
       .expect(404)
       .expect('Content-Type', /json/)
       .end(done);
+  });
+});
+
+describe('POST /api/connect', function() {
+
+  it('should reject connect credentials with an error', function(done) {
+    request(app)
+      .post('/api/connect')
+      .send({'error': 'no good'})
+      .expect(401)
+      .expect('Content-Type', /json/)
+      .end(function(err, res) {
+        if (err) return done(err);
+        res.body.should.eql({"error": "no good"});
+        done();
+      });
+  });
+
+  it('should fail with an access_token for now', function(done) {
+    request(app)
+      .post('/api/connect')
+      .send('access_token', 'abc')
+      .expect(500)
+      .expect('Content-Type', /json/)
+      .end(function(err, res) {
+        if (err) return done(err);
+        res.body.should.eql({"error": "access_token not supported"});
+        done();
+      });
+  });
+
+  it('should fail without a code or access_token', function(done) {
+    request(app)
+      .post('/api/connect')
+      .expect(500)
+      .expect('Content-Type', /json/)
+      .end(function(err, res) {
+        if (err) return done(err);
+        res.body.should.eql({"error": "code or access_token not found"});
+        done();
+      });
   });
 });
