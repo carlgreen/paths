@@ -21,6 +21,7 @@ app.use(session({store: sessionStore, secret: 'so secret'}));
 app.get('/api/users/:id', api.getUser);
 app.delete('/api/users/:id', api.removeUser);
 app.post('/api/connect', api.connect);
+app.post('/api/disconnect', api.disconnect);
 
 describe('GET /api/users/:id', function() {
 
@@ -143,6 +144,22 @@ describe('POST /api/connect', function() {
       .end(function(err, res) {
         if (err) return done(err);
         res.body.should.eql({"error": "code or access_token not found"});
+        done();
+      });
+  });
+});
+
+describe('POST /api/disconnect', function() {
+
+  it('should fail when not logged in', function(done) {
+    request(app)
+      .post('/api/disconnect')
+      .send({'error': 'no good'})
+      .expect(401)
+      .expect('Content-Type', /json/)
+      .end(function(err, res) {
+        if (err) return done(err);
+        res.body.should.eql({"error": "not logged in"});
         done();
       });
   });
