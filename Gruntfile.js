@@ -113,6 +113,12 @@ module.exports = function(grunt) {
         output: 'coverage/mocha/lcov.info'
       },
       server: ['test/server/**/*.js']
+    },
+
+    env: {
+      test: {
+        NODE_ENV: 'test'
+      }
     }
   });
 
@@ -136,6 +142,7 @@ module.exports = function(grunt) {
   grunt.registerTask('test', function(target) {
     if (target === 'server') {
       return grunt.task.run([
+        'env:test',
         'mochaTest',
         'mochacov'
       ]);
