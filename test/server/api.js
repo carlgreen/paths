@@ -5,6 +5,9 @@ var should = require('should'),
     bodyParser = require('body-parser'),
     cookieParser = require('cookie-parser'),
     session = require('express-session'),
+    MemoryStore = require('express-session/session/memory'),
+    Cookie = require("express-session/session/cookie"),
+    cookieSignature = require("cookie-parser/node_modules/cookie-signature"),
     api = require('../../routes/api'),
     request = require('supertest'),
     sinon = require('sinon');
@@ -12,7 +15,8 @@ var should = require('should'),
 var app = express();
 app.use(bodyParser());
 app.use(cookieParser());
-app.use(session({secret: 'so secret'}));
+var sessionStore = new MemoryStore;
+app.use(session({store: sessionStore, secret: 'so secret'}));
 
 app.get('/api/users/:id', api.getUser);
 app.delete('/api/users/:id', api.removeUser);
@@ -85,6 +89,25 @@ describe('DELETE /api/users/:id', function() {
 });
 
 describe('POST /api/connect', function() {
+
+  it('should return user id from session', function(done) {
+    sessionStore.set('aSessionId', {
+      'cookie': new Cookie,
+      'user_id': '13'
+    });
+    var cookieVal = 'connect.sid=s:'
+      + cookieSignature.sign('aSessionId', 'so secret');
+    request(app)
+      .post('/api/connect')
+      .set('cookie', [cookieVal])
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .end(function(err, res) {
+        if (err) return done(err);
+        res.body.should.eql({"id": "13"});
+        done();
+      });
+  });
 
   it('should reject connect credentials with an error', function(done) {
     request(app)
