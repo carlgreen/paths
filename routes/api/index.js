@@ -42,6 +42,8 @@ function updateUser(profile, callback) {
   delete profile.id;
   db.collection('users').findAndModify({"_id": profile._id}, null, profile, {upsert: true, new: true}, callback);
 }
+// exposed for testing
+exports.updateUser = updateUser;
 
 exports.connect = function(req, res) {
   if ('user_id' in req.session) {

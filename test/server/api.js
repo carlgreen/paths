@@ -164,3 +164,22 @@ describe('POST /api/disconnect', function() {
       });
   });
 });
+
+describe('updateUser', function() {
+
+  before(function() {
+    var collection = {};
+    collection.findAndModify = sinon.stub();
+    collection.findAndModify.withArgs(sinon.match({_id: '13'}), null, sinon.match({_id: '13', name: 'test_user'}), sinon.match.object, sinon.match.func).yieldsAsync(null, 0);
+    var db = {};
+    db.collection = sinon.stub();
+    db.collection.returns(collection);
+    api.connectDb(db);
+  });
+
+  it('should update the database with the expected data', function(done) {
+    api.updateUser({'id': '13', 'name': 'test_user'}, function() {
+      done();
+    });
+  });
+});
