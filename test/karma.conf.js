@@ -12,6 +12,7 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       'http://ajax.googleapis.com/ajax/libs/angularjs/1.2.6/angular.js',
+      'http://ajax.googleapis.com/ajax/libs/angularjs/1.2.6/angular-route.js',
       'https://apis.google.com/js/auth:plusone.js',
       'test/client/vendor/angular-mocks-1.2.6.js',
       'public/js/app.js',
