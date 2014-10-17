@@ -72,4 +72,17 @@
 
     start();
   });
+
+  pathsControllers.controller('AdminController', function($scope, PathsService) {
+    $scope.files = [];
+
+    $scope.listFiles = function() {
+      PathsService.listFiles()
+        .then(function(response) {
+          $scope.files = response.data;
+        });
+    };
+
+    $scope.listFiles();
+  });
 })();
