@@ -34,6 +34,14 @@
         });
     };
 
+    var listFiles = function() {
+      return $http.get('api/files');
+    };
+
+    service.listFiles = function() {
+      return listFiles();
+    };
+
     return service;
   });
 })();

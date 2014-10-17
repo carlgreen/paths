@@ -76,4 +76,17 @@ describe('Service: PathsService', function () {
     $httpBackend.flush();
     expect(success).toBe(false);
   });
+
+  it('should list all files', function() {
+    $httpBackend.expectGET('api/files').respond(200, [{name: 'file.csv'}]);
+
+    var data;
+    service.listFiles()
+      .then(function(response) {
+        data = response.data;
+      });
+
+    $httpBackend.flush();
+    expect(data).toEqual([{'name': 'file.csv'}]);
+  });
 });
