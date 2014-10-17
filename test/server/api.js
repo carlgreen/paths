@@ -221,7 +221,7 @@ describe('GET /api/files', function() {
       .expect('Content-Type', /json/)
       .end(function(err, res) {
         if (err) return done(err);
-        res.body.should.eql([{"_id": "1", "name": "1.csv"}, {"_id": "2", "name": "2.csv"}]);
+        res.body.should.eql([{"id": "1", "name": "1.csv"}, {"id": "2", "name": "2.csv"}]);
         done();
       });
   });

@@ -117,6 +117,10 @@ exports.listFiles = function(req, res) {
     if (err) {
       return res.json(500, {name: err.name, msg: err.message});
     }
+    for (var i = 0; i < files.length; i++) {
+      files[i].id = files[i]._id;
+      delete files[i]._id;
+    }
     return res.json(200, files);
   });
 };
