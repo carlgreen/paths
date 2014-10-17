@@ -111,3 +111,12 @@ exports.removeUser = function(req, res) {
     return res.status(204).end();
   });
 };
+
+exports.listFiles = function(req, res) {
+  db.collection('files').find({}).toArray(function(err, files) {
+    if (err) {
+      return res.json(500, {name: err.name, msg: err.message});
+    }
+    return res.json(200, files);
+  });
+};

@@ -66,6 +66,7 @@ var PathApp = function() {
     this.app.post('/api/disconnect', api.disconnect);
     this.app.get('/api/users/:id', api.getUser);
     this.app.delete('/api/users/:id', api.removeUser);
+    this.app.get('/api/files', api.listFiles);
   };
 
   this.start = function() {

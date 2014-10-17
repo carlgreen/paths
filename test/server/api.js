@@ -22,6 +22,7 @@ app.get('/api/users/:id', api.getUser);
 app.delete('/api/users/:id', api.removeUser);
 app.post('/api/connect', api.connect);
 app.post('/api/disconnect', api.disconnect);
+app.get('/api/files', api.listFiles);
 
 describe('GET /api/users/:id', function() {
 
@@ -181,5 +182,60 @@ describe('updateUser', function() {
     api.updateUser({'id': '13', 'name': 'test_user'}, function() {
       done();
     });
+  });
+});
+
+describe('GET /api/files', function() {
+
+  function setup(err, result) {
+    var find = {};
+    find.toArray = sinon.stub();
+    find.toArray.withArgs(sinon.match.func).yieldsAsync(err, result)
+    var collection = {};
+    collection.find = sinon.stub();
+    collection.find.withArgs(sinon.match({})).returns(find);
+    var db = {};
+    db.collection = sinon.stub();
+    db.collection.returns(collection);
+    api.connectDb(db);
+  }
+
+  it('should return an empty list when there are no files', function(done) {
+    setup(null, []);
+    request(app)
+      .get('/api/files')
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .end(function(err, res) {
+        if (err) return done(err);
+        res.body.should.eql([]);
+        done();
+      });
+  });
+
+  it('should return a list of files', function(done) {
+    setup(null, [{'_id': '1', 'name': '1.csv'}, {'_id': '2', 'name': '2.csv'}]);
+    request(app)
+      .get('/api/files')
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .end(function(err, res) {
+        if (err) return done(err);
+        res.body.should.eql([{"_id": "1", "name": "1.csv"}, {"_id": "2", "name": "2.csv"}]);
+        done();
+      });
+  });
+
+  it('should return error details when something goes wrong', function(done) {
+    setup({'name': 'error1', 'message': 'failed hard'}, null);
+    request(app)
+      .get('/api/files')
+      .expect(500)
+      .expect('Content-Type', /json/)
+      .end(function(err, res) {
+        if (err) return done(err);
+        res.body.should.eql({"name": "error1", "msg": "failed hard"});
+        done();
+      });
   });
 });
