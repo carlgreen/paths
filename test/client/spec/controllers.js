@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Controller: PathsController', function () {
+describe('Controller: PathsController', function() {
 
   // load the controller's module
   beforeEach(module('paths'));
@@ -14,7 +14,7 @@ describe('Controller: PathsController', function () {
     queryDeferred;
 
   // Initialize the controller and a mock scope
-  beforeEach(inject(function (_$q_, _$rootScope_, _$httpBackend_, $controller) {
+  beforeEach(inject(function(_$q_, _$rootScope_, _$httpBackend_, $controller) {
     $q = _$q_;
     $rootScope = _$rootScope_;
     $httpBackend = _$httpBackend_;
@@ -43,7 +43,7 @@ describe('Controller: PathsController', function () {
     expect(PathsController).toBeDefined();
   });
 
-  it('should attach the result of connect to the scope', function () {
+  it('should attach the result of connect to the scope', function() {
     /* jshint camelcase: false */
     expect(scope.userProfile).toBeUndefined();
 
@@ -56,7 +56,7 @@ describe('Controller: PathsController', function () {
     expect(scope.userProfile).toBe('xyz');
   });
 
-  it('should not set the user profile when connect fails', function () {
+  it('should not set the user profile when connect fails', function() {
     /* jshint camelcase: false */
     scope.processAuth({access_token: 'abc123'});
 
@@ -109,7 +109,7 @@ describe('Controller: PathsController', function () {
   });
 });
 
-describe('Controller: AdminController', function () {
+describe('Controller: AdminController', function() {
 
   // load the controller's module
   beforeEach(module('paths'));
@@ -122,7 +122,7 @@ describe('Controller: AdminController', function () {
     queryDeferred;
 
   // Initialize the controller and a mock scope
-  beforeEach(inject(function (_$q_, _$rootScope_, $controller) {
+  beforeEach(inject(function(_$q_, _$rootScope_, $controller) {
     $q = _$q_;
     $rootScope = _$rootScope_;
     scope = $rootScope.$new();
@@ -145,11 +145,11 @@ describe('Controller: AdminController', function () {
     expect(AdminController).toBeDefined();
   });
 
-  it('should have an empty list of files on load', function () {
+  it('should have an empty list of files on load', function() {
     expect(scope.files).toEqual([]);
   });
 
-  it('should populate file list', function () {
+  it('should populate file list', function() {
     queryDeferred.resolve({data: [{id: '1', name: 'file.csv'}]});
     $rootScope.$apply();
 
