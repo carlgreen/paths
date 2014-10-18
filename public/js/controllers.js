@@ -84,5 +84,15 @@
     };
 
     $scope.listFiles();
+
+    $scope.setFiles = function(element) {
+      $scope.$apply(function() {
+        // Turn the FileList object into an Array
+        $scope.uploadFiles = [];
+        for (var i = 0; i < element.files.length; i++) {
+          $scope.uploadFiles.push(element.files[i]);
+        }
+      });
+    };
   });
 })();

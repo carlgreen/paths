@@ -156,4 +156,17 @@ describe('Controller: AdminController', function() {
     expect(pathsService.listFiles).toHaveBeenCalled();
     expect(scope.files).toEqual([{id: '1', name: 'file.csv'}]);
   });
+
+  it('should extract filenames to upload from the input', function() {
+    expect(scope.uploadFiles).toBeUndefined();
+    var element = {
+      files: {
+        '0': {'name': 'afile'},
+        '1': {'name': 'bfile'},
+        'length': 2
+      }
+    };
+    scope.setFiles(element);
+    expect(scope.uploadFiles).toEqual([{'name': 'afile'}, {'name': 'bfile'}]);
+  });
 });
