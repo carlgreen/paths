@@ -12,3 +12,12 @@
 <h2>upload</h2>
 <label for="fileToUpload">Select a File to Upload</label><br />
 <input id="fileToUpload" type="file" multiple onchange="angular.element(this).scope().setFiles(this)">
+<div data-ng-show="uploadFiles.length">
+  <div data-ng-repeat="file in uploadFiles">
+    <span>{{file.webkitRelativePath || file.name}}</span>
+    (<span data-ng-switch="file.size > 1024*1024">
+        <span data-ng-switch-when="true">{{file.size / 1024 / 1024 | number:2}} MB</span>
+        <span data-ng-switch-default>{{file.size / 1024 | number:2}} kB</span>
+    </span>)
+  </div>
+</div>
