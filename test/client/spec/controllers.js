@@ -128,7 +128,7 @@ describe('Controller: AdminController', function() {
     scope = $rootScope.$new();
     queryDeferred = undefined;
     pathsService = {
-    listFiles: function() {
+      listFiles: function() {
         queryDeferred = $q.defer();
         return queryDeferred.promise;
       }
