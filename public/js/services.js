@@ -42,6 +42,10 @@
       return listFiles();
     };
 
+    service.uploadFiles = function(files) {
+      return $http.post('api/files/upload');
+    };
+
     return service;
   });
 })();

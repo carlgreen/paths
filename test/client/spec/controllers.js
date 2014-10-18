@@ -131,9 +131,14 @@ describe('Controller: AdminController', function() {
       listFiles: function() {
         queryDeferred = $q.defer();
         return queryDeferred.promise;
+      },
+      uploadFiles: function() {
+        queryDeferred = $q.defer();
+        return queryDeferred.promise;
       }
     };
     spyOn(pathsService, 'listFiles').andCallThrough();
+    spyOn(pathsService, 'uploadFiles').andCallThrough();
 
     AdminController = $controller('AdminController', {
       $scope: scope,
@@ -168,5 +173,15 @@ describe('Controller: AdminController', function() {
     };
     scope.setFiles(element);
     expect(scope.uploadFiles).toEqual([{'name': 'afile'}, {'name': 'bfile'}]);
+  });
+
+  it('should pass the files to the service to be uploaded', function() {
+    scope.uploadFiles = [{'name': 'afile'}, {'name': 'bfile'}];
+    scope.doUploadFiles();
+
+    queryDeferred.resolve();
+    $rootScope.$apply();
+
+    expect(pathsService.uploadFiles).toHaveBeenCalledWith([{'name': 'afile'}, {'name': 'bfile'}]);
   });
 });

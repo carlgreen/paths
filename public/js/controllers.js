@@ -94,5 +94,9 @@
         }
       });
     };
+
+    $scope.doUploadFiles = function() {
+      PathsService.uploadFiles($scope.uploadFiles);
+    };
   });
 })();
