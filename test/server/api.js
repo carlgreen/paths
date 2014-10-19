@@ -246,6 +246,29 @@ describe('GET /api/files', function() {
 describe('POST /api/files/upload', function() {
 
   var collection;
+  var docMatcher = function(expected) {
+    if (!Array.isArray(expected)) {
+      throw new Error('expected an array');
+      return null;
+    }
+    return sinon.match(function(value) {
+      if (!Array.isArray(value)) {
+        return false;
+      }
+      if (value.length !== expected.length) {
+        return false;
+      }
+      for (var i = 0; i < value.length; i++) {
+        if (value[i].name !== expected[i].name) {
+          return false;
+        }
+        if (typeof value[i].raw === 'undefined') {
+          return false;
+        }
+      }
+      return true;
+    }, "docMatcher");
+  }
 
   beforeEach(function() {
     collection = {};
@@ -257,7 +280,7 @@ describe('POST /api/files/upload', function() {
   });
 
   it('should upload a single file', function(done) {
-    collection.insert.withArgs(sinon.match([{name: 'api.js'}]), sinon.match.func).yieldsAsync(null, [{}]);
+    collection.insert.withArgs(docMatcher([{name: 'api.js'}]), sinon.match.func).yieldsAsync(null, [{}]);
     request(app)
       .post('/api/files/upload')
       .attach('uploadedFile', 'test/server/api.js')
@@ -269,7 +292,7 @@ describe('POST /api/files/upload', function() {
   });
 
   it('should upload multiple files', function(done) {
-    collection.insert.withArgs(sinon.match([{name: 'api.js'}, {name: 'api.js'}]), sinon.match.func).yieldsAsync(null, [{}, {}]);
+    collection.insert.withArgs(docMatcher([{name: 'api.js'}, {name: 'api.js'}]), sinon.match.func).yieldsAsync(null, [{}, {}]);
     request(app)
       .post('/api/files/upload')
       .attach('uploadedFile', 'test/server/api.js')
@@ -282,7 +305,7 @@ describe('POST /api/files/upload', function() {
   });
 
   it('should return a server error when insert fails', function(done) {
-    collection.insert.withArgs(sinon.match([{name: 'api.js'}]), sinon.match.func).yieldsAsync({name: 'error', message: 'failed'}, null);
+    collection.insert.withArgs(docMatcher([{name: 'api.js'}]), sinon.match.func).yieldsAsync({name: 'error', message: 'failed'}, null);
     request(app)
       .post('/api/files/upload')
       .attach('uploadedFile', 'test/server/api.js')

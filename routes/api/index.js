@@ -1,4 +1,5 @@
-var googleapis = require('googleapis'),
+var fs = require('fs'),
+  googleapis = require('googleapis'),
   https = require('https');
 
 var REDIRECT_URL = 'postmessage';
@@ -131,10 +132,20 @@ exports.uploadFiles = function(req, res) {
   if (!Array.isArray(uploadedFile)) {
     uploadedFile = [uploadedFile];
   }
+  var deleteCb = function (err) {
+    if (err) {
+      console.error('could not delete ' + err.path);
+      console.error(err);
+    }
+  };
   for (var i = 0; i < uploadedFile.length; i++) {
+    // TODO get async on this
+    var content = fs.readFileSync(uploadedFile[i].path, {options: {encoding: 'String'}});
     files.push({
-      name: uploadedFile[i].originalFilename
+      name: uploadedFile[i].originalFilename,
+      raw: content.toString()
     });
+    fs.unlink(uploadedFile[i].path, deleteCb);
   }
   db.collection('files').insert(files, function(err, result) {
     if (err) {
