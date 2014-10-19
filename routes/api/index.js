@@ -124,3 +124,23 @@ exports.listFiles = function(req, res) {
     return res.json(200, files);
   });
 };
+
+exports.uploadFiles = function(req, res) {
+  var files = [];
+  var uploadedFile = req.files.uploadedFile;
+  if (!Array.isArray(uploadedFile)) {
+    uploadedFile = [uploadedFile];
+  }
+  for (var i = 0; i < uploadedFile.length; i++) {
+    files.push({
+      name: uploadedFile[i].originalFilename
+    });
+  }
+  db.collection('files').insert(files, function(err, result) {
+    if (err) {
+      return res.json(500, {name: err.name, msg: err.message});
+    }
+    console.log('uploaded ' + result.length + ' files');
+    return res.status(204).end();
+  });
+};

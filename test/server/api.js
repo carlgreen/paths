@@ -3,6 +3,7 @@
 var should = require('should'),
     express = require('express'),
     bodyParser = require('body-parser'),
+    multipart = require('connect-multiparty'),
     cookieParser = require('cookie-parser'),
     session = require('express-session'),
     MemoryStore = require('express-session/session/memory'),
@@ -14,6 +15,7 @@ var should = require('should'),
 
 var app = express();
 app.use(bodyParser());
+app.use(multipart());
 app.use(cookieParser());
 var sessionStore = new MemoryStore;
 app.use(session({store: sessionStore, secret: 'so secret'}));
@@ -23,6 +25,7 @@ app.delete('/api/users/:id', api.removeUser);
 app.post('/api/connect', api.connect);
 app.post('/api/disconnect', api.disconnect);
 app.get('/api/files', api.listFiles);
+app.post('/api/files/upload', api.uploadFiles);
 
 describe('GET /api/users/:id', function() {
 
@@ -235,6 +238,59 @@ describe('GET /api/files', function() {
       .end(function(err, res) {
         if (err) return done(err);
         res.body.should.eql({"name": "error1", "msg": "failed hard"});
+        done();
+      });
+  });
+});
+
+describe('POST /api/files/upload', function() {
+
+  var collection;
+
+  beforeEach(function() {
+    collection = {};
+    collection.insert = sinon.stub();
+    var db = {};
+    db.collection = sinon.stub();
+    db.collection.returns(collection);
+    api.connectDb(db);
+  });
+
+  it('should upload a single file', function(done) {
+    collection.insert.withArgs(sinon.match([{name: 'api.js'}]), sinon.match.func).yieldsAsync(null, [{}]);
+    request(app)
+      .post('/api/files/upload')
+      .attach('uploadedFile', 'test/server/api.js')
+      .expect(204)
+      .end(function(err, res) {
+        if (err) return done(err);
+        done();
+      });
+  });
+
+  it('should upload multiple files', function(done) {
+    collection.insert.withArgs(sinon.match([{name: 'api.js'}, {name: 'api.js'}]), sinon.match.func).yieldsAsync(null, [{}, {}]);
+    request(app)
+      .post('/api/files/upload')
+      .attach('uploadedFile', 'test/server/api.js')
+      .attach('uploadedFile', 'test/server/api.js')
+      .expect(204)
+      .end(function(err, res) {
+        if (err) return done(err);
+        done();
+      });
+  });
+
+  it('should return a server error when insert fails', function(done) {
+    collection.insert.withArgs(sinon.match([{name: 'api.js'}]), sinon.match.func).yieldsAsync({name: 'error', message: 'failed'}, null);
+    request(app)
+      .post('/api/files/upload')
+      .attach('uploadedFile', 'test/server/api.js')
+      .expect(500)
+      .expect('Content-Type', /json/)
+      .end(function(err, res) {
+        if (err) return done(err);
+        res.body.should.eql({"name": "error", "msg": "failed"});
         done();
       });
   });

@@ -2,6 +2,7 @@ var express = require('express'),
   bodyParser = require('body-parser'),
   cookieParser = require('cookie-parser'),
   session = require('express-session'),
+  multipart = require('connect-multiparty'),
   path = require('path'),
   MongoClient = require('mongodb').MongoClient,
   api = require('./routes/api');
@@ -40,7 +41,9 @@ var PathApp = function() {
     });
 
     this.app = express();
+    // TODO review usage of bodyParser and multipart
     this.app.use(bodyParser());
+    this.app.use(multipart());
     this.app.use(cookieParser());
     this.app.use(session({secret: process.env.SESSION_SECRET}));
     this.app.set('port', process.env.OPENSHIFT_NODEJS_PORT || 1337);
@@ -67,6 +70,7 @@ var PathApp = function() {
     this.app.get('/api/users/:id', api.getUser);
     this.app.delete('/api/users/:id', api.removeUser);
     this.app.get('/api/files', api.listFiles);
+    this.app.post('/api/files/upload', api.uploadFiles);
   };
 
   this.start = function() {
