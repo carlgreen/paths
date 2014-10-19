@@ -89,17 +89,4 @@ describe('Service: PathsService', function () {
     $httpBackend.flush();
     expect(data).toEqual([{'name': 'file.csv'}]);
   });
-
-  it('should upload files', function() {
-    $httpBackend.expectPOST('api/files/upload').respond(204, [{name: 'file.csv'}]);
-
-    var success;
-    service.uploadFiles([{name: 'file.csv'}])
-      .then(function() {
-        success = true;
-      });
-
-    $httpBackend.flush();
-    expect(success).toBe(true);
-  });
 });

@@ -43,7 +43,15 @@
     };
 
     service.uploadFiles = function(files) {
-      return $http.post('api/files/upload');
+      // can't use $http here
+      var fd = new FormData();
+      for (var i in files) {
+        fd.append('uploadedFile', files[i]);
+        console.log(files[i]);
+      }
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', 'api/files/upload');
+      xhr.send(fd);
     };
 
     return service;
