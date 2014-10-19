@@ -47,7 +47,6 @@
       var fd = new FormData();
       for (var i in files) {
         fd.append('uploadedFile', files[i]);
-        console.log(files[i]);
       }
       var xhr = new XMLHttpRequest();
       xhr.open('POST', 'api/files/upload');
