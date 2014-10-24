@@ -41,8 +41,9 @@ var PathApp = function() {
     });
 
     this.app = express();
-    // TODO review usage of bodyParser and multipart
-    this.app.use(bodyParser());
+    this.app.use(bodyParser.json());
+    this.app.use(bodyParser.urlencoded());
+    // TODO review usage of multipart
     this.app.use(multipart());
     this.app.use(cookieParser());
     this.app.use(session({secret: process.env.SESSION_SECRET}));

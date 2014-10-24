@@ -14,7 +14,8 @@ var should = require('should'),
     sinon = require('sinon');
 
 var app = express();
-app.use(bodyParser());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded());
 app.use(multipart());
 app.use(cookieParser());
 var sessionStore = new MemoryStore;
