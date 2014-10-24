@@ -89,4 +89,17 @@ describe('Service: PathsService', function () {
     $httpBackend.flush();
     expect(data).toEqual([{'name': 'file.csv'}]);
   });
+
+  it('should upload the files', function() {
+    var xhr = sinon.useFakeXMLHttpRequest();
+    var request;
+    xhr.onCreate = function(xhr) {
+      request = xhr;
+    };
+    service.uploadFiles([{name: 'file.csv'}]);
+    expect(request.method).toBe('POST');
+    expect(request.url).toBe('api/files/upload');
+    // no idea how to test the actual data sent
+    sinon.restore();
+  });
 });
