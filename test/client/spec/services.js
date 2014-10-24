@@ -96,10 +96,41 @@ describe('Service: PathsService', function () {
     xhr.onCreate = function(xhr) {
       request = xhr;
     };
-    service.uploadFiles([{name: 'file.csv'}]);
+    var success;
+    service.uploadFiles([{name: 'file.csv'}])
+      .then(function() {
+        success = true;
+      });
+    sinon.restore();
+
     expect(request.method).toBe('POST');
     expect(request.url).toBe('api/files/upload');
     // no idea how to test the actual data sent
+
+    request.respond(204);
+    expect(success).toBe(true);
+  });
+
+  it('should not be successful when files could not be uploaded', function() {
+    var xhr = sinon.useFakeXMLHttpRequest();
+    var request;
+    xhr.onCreate = function(xhr) {
+      request = xhr;
+    };
+    var success;
+    service.uploadFiles([{name: 'file.csv'}])
+      .then(function() {
+        success = true;
+      })
+      .catch(function() {
+        success = false;
+      });
     sinon.restore();
+
+    expect(request.method).toBe('POST');
+    expect(request.url).toBe('api/files/upload');
+
+    request.respond(500);
+    expect(success).toBe(false);
   });
 });
