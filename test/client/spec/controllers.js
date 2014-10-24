@@ -183,5 +183,7 @@ describe('Controller: AdminController', function() {
     $rootScope.$apply();
 
     expect(pathsService.uploadFiles).toHaveBeenCalledWith([{'name': 'afile'}, {'name': 'bfile'}]);
+    // should be called on load and after upload
+    expect(pathsService.listFiles.callCount).toBe(2);
   });
 });

@@ -2,7 +2,7 @@
   'use strict';
 
   var pathsServices = angular.module('pathsServices', []);
-  pathsServices.service('PathsService', function($http) {
+  pathsServices.service('PathsService', function($http, $rootScope, $q) {
     var service = {};
 
     var connect = function(authResult) {
@@ -44,13 +44,33 @@
 
     service.uploadFiles = function(files) {
       // can't use $http here
+      var deferred = $q.defer();
       var fd = new FormData();
       for (var i in files) {
         fd.append('uploadedFile', files[i]);
       }
       var xhr = new XMLHttpRequest();
       xhr.open('POST', 'api/files/upload');
+      xhr.onreadystatechange = function () {
+        $rootScope.$apply(function () {
+          if (xhr.readyState === 4) {
+            var r = {
+              data: xhr.response,
+              status: xhr.status,
+              headers: xhr.getResponseHeader,
+              config: {}
+            };
+            if (r.status === 204) {
+              deferred.resolve(r);
+            } else {
+              deferred.reject(r);
+            }
+          }
+        });
+      };
       xhr.send(fd);
+
+      return deferred.promise;
     };
 
     return service;
