@@ -83,9 +83,7 @@
         });
     };
 
-    $scope.listFiles = listFiles;
-
-    $scope.listFiles();
+    listFiles();
 
     $scope.setFiles = function(element) {
       $scope.$apply(function() {
