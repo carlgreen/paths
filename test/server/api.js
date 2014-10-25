@@ -3,7 +3,6 @@
 var should = require('should'),
     express = require('express'),
     bodyParser = require('body-parser'),
-    multipart = require('connect-multiparty'),
     cookieParser = require('cookie-parser'),
     session = require('express-session'),
     MemoryStore = require('express-session/session/memory'),
@@ -16,7 +15,6 @@ var should = require('should'),
 var app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
-app.use(multipart());
 app.use(cookieParser());
 var sessionStore = new MemoryStore;
 app.use(session({store: sessionStore, secret: 'so secret'}));

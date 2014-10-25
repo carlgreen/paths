@@ -1,6 +1,7 @@
 var fs = require('fs'),
   googleapis = require('googleapis'),
-  https = require('https');
+  https = require('https'),
+  multiparty = require('multiparty');
 
 var REDIRECT_URL = 'postmessage';
 var oauth2Client = new googleapis.OAuth2Client(process.env.CLIENT_ID, process.env.CLIENT_SECRET, REDIRECT_URL);
@@ -127,31 +128,32 @@ exports.listFiles = function(req, res) {
 };
 
 exports.uploadFiles = function(req, res) {
-  var files = [];
-  var uploadedFile = req.files.uploadedFile;
-  if (!Array.isArray(uploadedFile)) {
-    uploadedFile = [uploadedFile];
-  }
-  var deleteCb = function (err) {
-    if (err) {
-      console.error('could not delete ' + err.path);
-      console.error(err);
+  var form = new multiparty.Form();
+
+  form.parse(req, function(err, fields, formfiles) {
+    var files = [];
+    var uploadedFile = formfiles.uploadedFile;
+    var deleteCb = function (err) {
+      if (err) {
+        console.error('could not delete ' + err.path);
+        console.error(err);
+      }
+    };
+    for (var i = 0; i < uploadedFile.length; i++) {
+      // TODO get async on this
+      var content = fs.readFileSync(uploadedFile[i].path, {options: {encoding: 'String'}});
+      files.push({
+        name: uploadedFile[i].originalFilename,
+        raw: content.toString()
+      });
+      fs.unlink(uploadedFile[i].path, deleteCb);
     }
-  };
-  for (var i = 0; i < uploadedFile.length; i++) {
-    // TODO get async on this
-    var content = fs.readFileSync(uploadedFile[i].path, {options: {encoding: 'String'}});
-    files.push({
-      name: uploadedFile[i].originalFilename,
-      raw: content.toString()
+    db.collection('files').insert(files, function(err, result) {
+      if (err) {
+        return res.json(500, {name: err.name, msg: err.message});
+      }
+      console.log('uploaded ' + result.length + ' files');
+      return res.status(204).end();
     });
-    fs.unlink(uploadedFile[i].path, deleteCb);
-  }
-  db.collection('files').insert(files, function(err, result) {
-    if (err) {
-      return res.json(500, {name: err.name, msg: err.message});
-    }
-    console.log('uploaded ' + result.length + ' files');
-    return res.status(204).end();
   });
 };
