@@ -1,8 +1,10 @@
-var should = require('should'),
-  parser = require('../../parser.js');
+'use strict';
 
-describe('parsing', function() {
-  it('should test something', function(done) {
+var should = require('should'),
+  parser = require('../../parser');
+
+describe('Parser', function() {
+  it('should parse simple file', function(done) {
     var input = 'INDEX,TAG,DATE,TIME,LATITUDE N/S,LONGITUDE E/W\n'
       + '1\0\0\0\0\0,T,120617,193517,012.345678N,123.456789W\n'
       + '2\0\0\0\0\0,T,120617,193519,023.456789S,112.345678E\n';
