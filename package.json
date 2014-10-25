@@ -45,8 +45,13 @@
   },
   "config": {
     "blanket": {
+      "data-cover-never": [
+        "node_modules",
+        "test"
+      ],
       "pattern": [
-        "routes"
+        "routes",
+        "parser.js"
       ]
     }
   }
