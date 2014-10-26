@@ -27,7 +27,7 @@ exports.parse = function(data, successCb, errorCb) {
   var parser = parse({columns: true});
   parser.on('readable', function() {
     var record;
-    while (record = parser.read()) {
+    while ((record = parser.read())) {
       var timestamp = makeIsoDate(record.DATE, record.TIME);
       var lat = formatLatLng(record['LATITUDE N/S']);
       var lng = formatLatLng(record['LONGITUDE E/W']);
