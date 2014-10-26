@@ -4,7 +4,8 @@ var express = require('express'),
   session = require('express-session'),
   path = require('path'),
   MongoClient = require('mongodb').MongoClient,
-  api = require('./routes/api');
+  api = require('./routes/api'),
+  auth = require('./auth.js');
 
 var PathApp = function() {
   this.terminator = function(sig) {
@@ -44,6 +45,7 @@ var PathApp = function() {
     this.app.use(bodyParser.urlencoded());
     this.app.use(cookieParser());
     this.app.use(session({secret: process.env.SESSION_SECRET}));
+    this.app.use('/api', auth());
     this.app.set('port', process.env.OPENSHIFT_NODEJS_PORT || 1337);
     this.app.use(express.static(path.join(__dirname, 'public')));
 

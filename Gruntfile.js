@@ -42,6 +42,7 @@ module.exports = function(grunt) {
         files: [
           'server.js',
           'parser.js',
+          'auth.js',
           'routes/**/*.js'
         ],
         tasks: ['newer:jshint:server', 'express:dev', 'wait'],
@@ -80,7 +81,7 @@ module.exports = function(grunt) {
         options: {
           jshintrc: '.jshintrc_server'
         },
-        src: ['server.js', 'parser.js', 'routes/{,*/}*.js']
+        src: ['server.js', 'parser.js', 'auth.js', 'routes/{,*/}*.js']
       },
       all: [
         'public/js/{,*/}*.js'
