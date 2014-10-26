@@ -12,6 +12,9 @@ var makeIsoDate = function(dateStr, timeStr) {
 
 var formatLatLng = function(latLngStr) {
   var latLng = parseFloat(latLngStr.slice(0, -1));
+  if (isNaN(latLng)) {
+    throw new Error('Expected number, not ' + latLngStr);
+  }
   var dir = latLngStr.charAt(latLngStr.length - 1);
   if (dir === 'S' || dir === 'W') {
     latLng *= -1;

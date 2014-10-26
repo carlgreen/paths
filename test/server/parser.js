@@ -18,4 +18,27 @@ describe('Parser', function() {
       done(err);
     });
   });
+
+  it('should handle invalid number in lat/lng', function(done) {
+    var input = 'INDEX,TAG,DATE,TIME,LATITUDE N/S,LONGITUDE E/W\n'
+      + '1\0\0\0\0\0,T,120617,193517,aN,123.456789W\n'
+      + '2\0\0\0\0\0,T,120617,193519,023.456789S,112.345678E\n';
+    parser.parse(input, function() {
+      done(new Error('Shouldn\'t get here'));
+    }, function(err) {
+      err.should.be.ok;
+      done();
+    });
+  });
+
+  it('should handle invalid date', function(done) {
+    var input = 'INDEX,TAG,DATE,TIME,LATITUDE N/S,LONGITUDE E/W\n'
+      + '1\0\0\0\0\0,T,12aa17,193517,012.345678N,123.456789W\n';
+    parser.parse(input, function() {
+      done(new Error('Shouldn\'t get here'));
+    }, function(err) {
+      err.should.be.ok;
+      done();
+    });
+  });
 });
