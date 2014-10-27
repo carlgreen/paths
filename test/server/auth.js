@@ -6,6 +6,11 @@ var should = require('should'),
 
 describe('Auth', function() {
   var auth;
+  var unexpectedNext = function(done) {
+    return function() {
+      done(new Error('should not call next'));
+    };
+  };
 
   beforeEach(function() {
     auth = authModule();
@@ -47,7 +52,7 @@ describe('Auth', function() {
         status.should.equal(401);
         done();
       }
-    }, null);
+    }, unexpectedNext(done));
   });
 
   it('should send 500 if an error occurs querying the database', function(done) {
@@ -61,7 +66,7 @@ describe('Auth', function() {
         status.should.equal(500);
         done();
       }
-    }, null);
+    }, unexpectedNext(done));
   });
 
   it('should send 401 if no user_id in the session', function(done) {
@@ -73,7 +78,7 @@ describe('Auth', function() {
         status.should.equal(401);
         done();
       }
-    }, null);
+    }, unexpectedNext(done));
   });
 
   it('should send 500 if database is not configured', function(done) {
@@ -90,6 +95,6 @@ describe('Auth', function() {
         status.should.equal(500);
         done();
       }
-    }, null);
+    }, unexpectedNext(done));
   });
 });
