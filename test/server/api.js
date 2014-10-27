@@ -35,7 +35,7 @@ describe('GET /api/users/:id', function() {
     collection.findOne.withArgs(sinon.match.object, sinon.match.func).yieldsAsync(null, null);
     var db = {};
     db.collection = sinon.stub();
-    db.collection.returns(collection);
+    db.collection.withArgs('users').returns(collection);
     api.connectDb(db);
   });
 
@@ -69,7 +69,7 @@ describe('DELETE /api/users/:id', function() {
     collection.remove.withArgs(sinon.match.object, sinon.match.func).yieldsAsync(null, 0);
     var db = {};
     db.collection = sinon.stub();
-    db.collection.returns(collection);
+    db.collection.withArgs('users').returns(collection);
     api.connectDb(db);
   });
 
@@ -176,7 +176,7 @@ describe('updateUser', function() {
     collection.findAndModify.withArgs(sinon.match({_id: '13'}), null, sinon.match({_id: '13', name: 'test_user'}), sinon.match.object, sinon.match.func).yieldsAsync(null, 0);
     var db = {};
     db.collection = sinon.stub();
-    db.collection.returns(collection);
+    db.collection.withArgs('users').returns(collection);
     api.connectDb(db);
   });
 
@@ -198,7 +198,7 @@ describe('GET /api/files', function() {
     collection.find.withArgs(sinon.match({})).returns(find);
     var db = {};
     db.collection = sinon.stub();
-    db.collection.returns(collection);
+    db.collection.withArgs('files').returns(collection);
     api.connectDb(db);
   }
 
@@ -274,7 +274,7 @@ describe('POST /api/files/upload', function() {
     collection.insert = sinon.stub();
     var db = {};
     db.collection = sinon.stub();
-    db.collection.returns(collection);
+    db.collection.withArgs('files').returns(collection);
     api.connectDb(db);
   });
 

@@ -22,7 +22,7 @@ describe('Auth', function() {
     collection.findOne.withArgs(sinon.match.object, sinon.match.func).yieldsAsync(null, null);
     var db = {};
     db.collection = sinon.stub();
-    db.collection.returns(collection);
+    db.collection.withArgs('users').returns(collection);
     auth.connectDb(db);
   });
 
