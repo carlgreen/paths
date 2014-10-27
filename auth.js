@@ -18,7 +18,16 @@ module.exports = function() {
         res.status(500);
         return;
       }
-      next();
+      var id = req.session.user_id;
+      db.collection('users').findOne({"_id": id}, function(err, user) {
+        if (err) {
+          return res.status(500);
+        }
+        if (user === null) {
+          return res.status(401);
+        }
+        next();
+      });
     }
   };
 };
