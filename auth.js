@@ -1,4 +1,7 @@
-module.exports = function() {
+module.exports = function(role) {
+  if (typeof role === 'undefined') {
+    throw new Error('required role must be provided');
+  }
   var db;
   return {
     connectDb: function(connection) {
@@ -19,11 +22,11 @@ module.exports = function() {
         return;
       }
       var id = req.session.user_id;
-      db.collection('users').findOne({"_id": id}, function(err, user) {
+      db.collection('roles').findOne({"_id": id, "roles": role}, {fields: {_id: 1}}, function(err, roles) {
         if (err) {
           return res.status(500);
         }
-        if (user === null) {
+        if (roles === null) {
           return res.status(401);
         }
         next();

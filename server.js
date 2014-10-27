@@ -40,7 +40,7 @@ var PathApp = function() {
       });
     });
 
-    var theAuth = auth();
+    var theAuth = auth('admin');
 
     this.app = express();
     this.app.use(bodyParser.json());

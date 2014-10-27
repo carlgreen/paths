@@ -13,16 +13,17 @@ describe('Auth', function() {
   };
 
   beforeEach(function() {
-    auth = authModule();
+    auth = authModule('the-role');
 
     var collection = {};
     collection.findOne = sinon.stub();
-    collection.findOne.withArgs(sinon.match({_id: '123'}), sinon.match.func).yieldsAsync(null, {_id: 123, name: 'test user'});
-    collection.findOne.withArgs(sinon.match({_id: '125'}), sinon.match.func).yieldsAsync({}, null);
-    collection.findOne.withArgs(sinon.match.object, sinon.match.func).yieldsAsync(null, null);
+    collection.findOne.withArgs(sinon.match({_id: '123', roles: 'the-role'}), sinon.match.object, sinon.match.func).yieldsAsync(null, {_id: 123});
+    collection.findOne.withArgs(sinon.match({_id: '125', roles: 'the-role'}), sinon.match.object, sinon.match.func).yieldsAsync({}, null);
+    collection.findOne.withArgs(sinon.match({_id: '126', roles: 'the-role'}), sinon.match.object, sinon.match.func).yieldsAsync(null, null);
+    collection.findOne.withArgs(sinon.match.object, sinon.match.object, sinon.match.func).yieldsAsync(null, null);
     var db = {};
     db.collection = sinon.stub();
-    db.collection.withArgs('users').returns(collection);
+    db.collection.withArgs('roles').returns(collection);
     auth.connectDb(db);
   });
 
@@ -32,7 +33,7 @@ describe('Auth', function() {
     }, {}, done);
   });
 
-  it('should be ok if user_id is in the session', function(done) {
+  it('should be ok if user_id in the session has the required role', function(done) {
     auth.doAuth({
       path: '/other',
       session: {
@@ -46,6 +47,20 @@ describe('Auth', function() {
       path: '/other',
       session: {
         user_id: '124'
+      }
+    }, {
+      status: function(status) {
+        status.should.equal(401);
+        done();
+      }
+    }, unexpectedNext(done));
+  });
+
+  it('should send 401 if user_id in the session does not have the required role', function(done) {
+    auth.doAuth({
+      path: '/other',
+      session: {
+        user_id: '126'
       }
     }, {
       status: function(status) {
