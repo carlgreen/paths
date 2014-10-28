@@ -40,14 +40,14 @@ var PathApp = function() {
       });
     });
 
-    var theAuth = auth('admin');
+    var adminAuth = auth('admin');
 
     this.app = express();
     this.app.use(bodyParser.json());
     this.app.use(bodyParser.urlencoded());
     this.app.use(cookieParser());
     this.app.use(session({secret: process.env.SESSION_SECRET}));
-    this.app.use('/api', theAuth.doAuth);
+    this.app.use('/api', adminAuth.doAuth);
     this.app.set('port', process.env.OPENSHIFT_NODEJS_PORT || 1337);
     this.app.use(express.static(path.join(__dirname, 'public')));
 
@@ -64,7 +64,7 @@ var PathApp = function() {
       if (err) throw err;
       console.log("connected to " + mongo_connection_string);
       api.connectDb(db);
-      theAuth.connectDb(db);
+      adminAuth.connectDb(db);
     });
 
     this.app.get('/api', api.index);
