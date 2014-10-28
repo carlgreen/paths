@@ -27,6 +27,10 @@ describe('Auth', function() {
     auth.connectDb(db);
   });
 
+  it('should throw an error when no role is provided', function() {
+    (function() {authModule()}).should.throw();
+  });
+
   it('should not do anything for /connect', function(done) {
     auth.doAuth({
       path: '/connect'
