@@ -41,13 +41,13 @@ var PathApp = function() {
     });
 
     var adminAuth = auth('admin');
+    var userAuth = auth('user');
 
     this.app = express();
     this.app.use(bodyParser.json());
     this.app.use(bodyParser.urlencoded());
     this.app.use(cookieParser());
     this.app.use(session({secret: process.env.SESSION_SECRET}));
-    this.app.use('/api', adminAuth.doAuth);
     this.app.set('port', process.env.OPENSHIFT_NODEJS_PORT || 1337);
     this.app.use(express.static(path.join(__dirname, 'public')));
 
@@ -65,15 +65,16 @@ var PathApp = function() {
       console.log("connected to " + mongo_connection_string);
       api.connectDb(db);
       adminAuth.connectDb(db);
+      userAuth.connectDb(db);
     });
 
     this.app.get('/api', api.index);
     this.app.post('/api/connect', api.connect);
-    this.app.post('/api/disconnect', api.disconnect);
-    this.app.get('/api/users/:id', api.getUser);
-    this.app.delete('/api/users/:id', api.removeUser);
-    this.app.get('/api/files', api.listFiles);
-    this.app.post('/api/files/upload', api.uploadFiles);
+    this.app.post('/api/disconnect', userAuth.doAuth, api.disconnect);
+    this.app.get('/api/users/:id', userAuth.doAuth, api.getUser);
+    this.app.delete('/api/users/:id', userAuth.doAuth, api.removeUser);
+    this.app.get('/api/files', adminAuth.doAuth, api.listFiles);
+    this.app.post('/api/files/upload', adminAuth.doAuth, api.uploadFiles);
   };
 
   this.start = function() {
