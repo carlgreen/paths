@@ -5,7 +5,7 @@ var express = require('express'),
   path = require('path'),
   MongoClient = require('mongodb').MongoClient,
   api = require('./routes/api'),
-  auth = require('./auth.js');
+  auth = require('./app/auth.js');
 
 var PathApp = function() {
   this.terminator = function(sig) {

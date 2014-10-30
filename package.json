@@ -51,8 +51,7 @@
       ],
       "pattern": [
         "routes",
-        "parser.js",
-        "auth.js"
+        "app"
       ]
     }
   }

@@ -2,7 +2,7 @@
 
 var should = require('should'),
   sinon = require('sinon'),
-  authModule = require('../../auth');
+  authModule = require('../../app/auth');
 
 describe('Auth', function() {
   var auth;

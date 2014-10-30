@@ -1,7 +1,7 @@
 'use strict';
 
 var should = require('should'),
-  parser = require('../../parser');
+  parser = require('../../app/parser');
 
 describe('Parser', function() {
   it('should parse simple file', function(done) {
