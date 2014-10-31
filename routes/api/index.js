@@ -1,7 +1,8 @@
 var fs = require('fs'),
   googleapis = require('googleapis'),
   https = require('https'),
-  multiparty = require('multiparty');
+  multiparty = require('multiparty'),
+  parser = require('../../app/parser');
 
 var REDIRECT_URL = 'postmessage';
 var oauth2Client = new googleapis.OAuth2Client(process.env.CLIENT_ID, process.env.CLIENT_SECRET, REDIRECT_URL);
@@ -136,8 +137,13 @@ function findUploadedFiles(errorCb, filesCb) {
   });
 };
 
-function parseFile(file) {
-  console.log(file);
+function getFileForParsing(file, errorCb, rawCb, parsedCb) {
+  db.collection('files').findAndModify({"_id": file._id}, null, {"$set": {state: "parsing"}}, function(err, file) {
+    if (err) {
+      errorCb(err);
+    }
+    rawCb(file.raw, parsedCb, errorCb);
+  });
 }
 
 exports.uploadFiles = function(req, res) {
@@ -174,7 +180,12 @@ exports.uploadFiles = function(req, res) {
       }, function(files) {
         // TODO is any of this async? should it be?
         for (var i = 0; i < files.length; i++) {
-          parseFile(files[i]);
+          getFileForParsing(files[i], function(err) {
+            // do something better here
+            console.log(err);
+          }, parser.parse, function() {
+            console.log('parsed what?');
+          });
         }
       });
       return res.status(204).end();
