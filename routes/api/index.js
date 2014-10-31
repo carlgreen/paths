@@ -144,7 +144,9 @@ exports.uploadFiles = function(req, res) {
       var content = fs.readFileSync(uploadedFile[i].path, {options: {encoding: 'String'}});
       files.push({
         name: uploadedFile[i].originalFilename,
-        raw: content.toString()
+        raw: content.toString(),
+        state: 'uploaded',
+        uploaded: new Date()
       });
       fs.unlink(uploadedFile[i].path, deleteCb);
     }
