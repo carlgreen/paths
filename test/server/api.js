@@ -277,7 +277,7 @@ describe('POST /api/files/upload', function() {
     toArray.withArgs(sinon.match.func).yieldsAsync(null, [{_id: '001', name: '14103101.CSV'}]);
     collection.find.withArgs(sinon.match({state: 'uploaded'})).returns({toArray: toArray});
     collection.findAndModify = sinon.stub();
-    collection.findAndModify.withArgs({"_id": "001"}, null, sinon.match.object, sinon.match.func).yieldsAsync(null, {raw: 'abc'});
+    collection.findAndModify.withArgs({"_id": "001"}, null, sinon.match.object, sinon.match.func).yieldsAsync(null, {_id: '001', raw: 'abc'});
     var db = {};
     db.collection = sinon.stub();
     db.collection.withArgs('files').returns(collection);
