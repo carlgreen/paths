@@ -127,6 +127,19 @@ exports.listFiles = function(req, res) {
   });
 };
 
+function findUploadedFiles(errorCb, filesCb) {
+  db.collection('files').find({state: 'uploaded'}).toArray(function(err, files) {
+    if (err) {
+      return errorCb(err);
+    }
+    filesCb(files);
+  });
+};
+
+function parseFile(file) {
+  console.log(file);
+}
+
 exports.uploadFiles = function(req, res) {
   var form = new multiparty.Form();
 
@@ -155,6 +168,15 @@ exports.uploadFiles = function(req, res) {
         return res.json(500, {name: err.name, msg: err.message});
       }
       console.log('uploaded ' + result.length + ' files');
+      findUploadedFiles(function(err) {
+        // do something better here
+        console.log(err);
+      }, function(files) {
+        // TODO is any of this async? should it be?
+        for (var i = 0; i < files.length; i++) {
+          parseFile(files[i]);
+        }
+      });
       return res.status(204).end();
     });
   });

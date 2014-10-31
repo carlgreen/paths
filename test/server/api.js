@@ -272,6 +272,10 @@ describe('POST /api/files/upload', function() {
   beforeEach(function() {
     collection = {};
     collection.insert = sinon.stub();
+    collection.find = sinon.stub();
+    var toArray = sinon.stub();
+    toArray.withArgs(sinon.match.func).yieldsAsync(null, [{name: '14103101.CSV'}]);
+    collection.find.withArgs(sinon.match({state: 'uploaded'})).returns({toArray: toArray});
     var db = {};
     db.collection = sinon.stub();
     db.collection.withArgs('files').returns(collection);
