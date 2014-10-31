@@ -142,8 +142,8 @@ function getFileForParsing(file, errorCb, rawCb, parsedCb) {
     if (err) {
       errorCb(err);
     }
-    rawCb(file.raw, function() {
-      parsedCb(file._id);
+    rawCb(file.raw, function(parsed) {
+      parsedCb(file._id, parsed);
     }, errorCb);
   });
 }
@@ -185,8 +185,8 @@ exports.uploadFiles = function(req, res) {
           getFileForParsing(files[i], function(err) {
             // do something better here
             console.log(err);
-          }, parser.parse, function(fileId) {
-            console.log('parsed ' + fileId);
+          }, parser.parse, function(fileId, parsed) {
+            console.log('parsed ' + fileId + ': ' + parsed);
           });
         }
       });
