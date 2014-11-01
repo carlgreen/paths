@@ -3,10 +3,14 @@
   <tr>
     <th>ID</th>
     <th>Name</th>
+    <th>State</th>
+    <th>Uploaded</th>
   </tr>
   <tr ng-repeat="file in files">
     <td>{{file.id}}</td>
     <td>{{file.name}}</td>
+    <td>{{file.state}}</td>
+    <td><time datetime="{{file.uploaded}}">{{file.uploaded | date:'medium'}}</time></td>
   </tr>
 </table>
 <h2>upload</h2>
