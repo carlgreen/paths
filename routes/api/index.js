@@ -138,7 +138,7 @@ function findUploadedFiles(errorCb, filesCb) {
 }
 
 function parseFile(file, errorCb, rawCb) {
-  db.collection('files').findAndModify({"_id": file._id}, null, {"$set": {state: "parsing"}}, function(err, file) {
+  db.collection('files').findAndModify({"_id": file._id, state: 'uploaded'}, null, {"$set": {state: "parsing"}}, function(err, file) {
     if (err) {
       errorCb(err);
     }
