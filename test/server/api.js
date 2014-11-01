@@ -278,9 +278,15 @@ describe('POST /api/files/upload', function() {
     filesCollection.find.withArgs(sinon.match({state: 'uploaded'})).returns({toArray: toArray});
     filesCollection.findAndModify = sinon.stub();
     filesCollection.findAndModify.withArgs({"_id": "001"}, null, sinon.match.object, sinon.match.func).yieldsAsync(null, {_id: '001', raw: 'abc'});
+
+    var pathsCollection = {};
+    pathsCollection.insert = sinon.stub();
+    pathsCollection.insert.withArgs(sinon.match.object, sinon.match.func).yieldsAsync(null, [{}]);
+
     var db = {};
     db.collection = sinon.stub();
     db.collection.withArgs('files').returns(filesCollection);
+    db.collection.withArgs('paths').returns(pathsCollection);
     api.connectDb(db);
   });
 

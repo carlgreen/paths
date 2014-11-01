@@ -137,13 +137,23 @@ function findUploadedFiles(errorCb, filesCb) {
   });
 };
 
-function getFileForParsing(file, errorCb, rawCb, parsedCb) {
+function parseFile(file, errorCb, rawCb) {
   db.collection('files').findAndModify({"_id": file._id}, null, {"$set": {state: "parsing"}}, function(err, file) {
     if (err) {
       errorCb(err);
     }
     rawCb(file.raw, function(parsed) {
-      parsedCb(file._id, parsed);
+      var path = {
+        _id: file._id,
+        filename: file.name,
+        points: parsed
+      };
+      db.collection('paths').insert(path, function(err, result) {
+        if (err) {
+          errorCb(err);
+        }
+        console.log(result);
+      });
     }, errorCb);
   });
 }
@@ -182,12 +192,10 @@ exports.uploadFiles = function(req, res) {
       }, function(files) {
         // TODO is any of this async? should it be?
         for (var i = 0; i < files.length; i++) {
-          getFileForParsing(files[i], function(err) {
+          parseFile(files[i], function(err) {
             // do something better here
             console.log(err);
-          }, parser.parse, function(fileId, parsed) {
-            console.log('parsed ' + fileId + ': ' + parsed);
-          });
+          }, parser.parse);
         }
       });
       return res.status(204).end();
