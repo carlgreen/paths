@@ -152,12 +152,12 @@ function parseFile(file, errorCb, rawCb) {
         if (err) {
           errorCb(err);
         }
-        console.log('saved path ' + JSON.stringify(result));
-        db.collection('files').findAndModify({"_id": file._id}, null, {"$set": {state: "parsed"}, "$unset": {raw: 1}}, function(err, file) {
+        console.log('saved path ' + result.filename);
+        db.collection('files').findAndModify({"_id": file._id}, null, {"$set": {state: "parsed"}, "$unset": {raw: 1}}, {new: true}, function(err, file) {
           if (err) {
             errorCb(err);
           }
-          console.log('parsed file ' + JSON.stringify(file));
+          console.log('parsed file ' + file.name);
         });
       });
     }, errorCb);
