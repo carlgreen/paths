@@ -135,7 +135,7 @@ function findUploadedFiles(errorCb, filesCb) {
     }
     filesCb(files);
   });
-};
+}
 
 function parseFile(file, errorCb, rawCb) {
   db.collection('files').findAndModify({"_id": file._id}, null, {"$set": {state: "parsing"}}, function(err, file) {
@@ -196,12 +196,13 @@ exports.uploadFiles = function(req, res) {
         // do something better here
         console.log(err);
       }, function(files) {
+        var errorHandler = function(err) {
+          // do something better here
+          console.log(err);
+        };
         // TODO is any of this async? should it be?
         for (var i = 0; i < files.length; i++) {
-          parseFile(files[i], function(err) {
-            // do something better here
-            console.log(err);
-          }, parser.parse);
+          parseFile(files[i], errorHandler, parser.parse);
         }
       });
       return res.status(204).end();
