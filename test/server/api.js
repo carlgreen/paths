@@ -29,13 +29,13 @@ app.post('/api/files/upload', api.uploadFiles);
 describe('GET /api/users/:id', function() {
 
   before(function() {
-    var collection = {};
-    collection.findOne = sinon.stub();
-    collection.findOne.withArgs(sinon.match({_id: '13'}), sinon.match.func).yieldsAsync(null, {_id: 13, name: 'test user'});
-    collection.findOne.withArgs(sinon.match.object, sinon.match.func).yieldsAsync(null, null);
+    var usersCollection = {};
+    usersCollection.findOne = sinon.stub();
+    usersCollection.findOne.withArgs(sinon.match({_id: '13'}), sinon.match.func).yieldsAsync(null, {_id: 13, name: 'test user'});
+    usersCollection.findOne.withArgs(sinon.match.object, sinon.match.func).yieldsAsync(null, null);
     var db = {};
     db.collection = sinon.stub();
-    db.collection.withArgs('users').returns(collection);
+    db.collection.withArgs('users').returns(usersCollection);
     api.connectDb(db);
   });
 
@@ -63,13 +63,13 @@ describe('GET /api/users/:id', function() {
 describe('DELETE /api/users/:id', function() {
 
   before(function() {
-    var collection = {};
-    collection.remove = sinon.stub();
-    collection.remove.withArgs(sinon.match({_id: '13'}), sinon.match.func).yieldsAsync(null, 1);
-    collection.remove.withArgs(sinon.match.object, sinon.match.func).yieldsAsync(null, 0);
+    var usersCollection = {};
+    usersCollection.remove = sinon.stub();
+    usersCollection.remove.withArgs(sinon.match({_id: '13'}), sinon.match.func).yieldsAsync(null, 1);
+    usersCollection.remove.withArgs(sinon.match.object, sinon.match.func).yieldsAsync(null, 0);
     var db = {};
     db.collection = sinon.stub();
-    db.collection.withArgs('users').returns(collection);
+    db.collection.withArgs('users').returns(usersCollection);
     api.connectDb(db);
   });
 
@@ -171,12 +171,12 @@ describe('POST /api/disconnect', function() {
 describe('updateUser', function() {
 
   before(function() {
-    var collection = {};
-    collection.findAndModify = sinon.stub();
-    collection.findAndModify.withArgs(sinon.match({_id: '13'}), null, sinon.match({_id: '13', name: 'test_user'}), sinon.match.object, sinon.match.func).yieldsAsync(null, 0);
+    var usersCollection = {};
+    usersCollection.findAndModify = sinon.stub();
+    usersCollection.findAndModify.withArgs(sinon.match({_id: '13'}), null, sinon.match({_id: '13', name: 'test_user'}), sinon.match.object, sinon.match.func).yieldsAsync(null, 0);
     var db = {};
     db.collection = sinon.stub();
-    db.collection.withArgs('users').returns(collection);
+    db.collection.withArgs('users').returns(usersCollection);
     api.connectDb(db);
   });
 
@@ -193,12 +193,12 @@ describe('GET /api/files', function() {
     var find = {};
     find.toArray = sinon.stub();
     find.toArray.withArgs(sinon.match.func).yieldsAsync(err, result)
-    var collection = {};
-    collection.find = sinon.stub();
-    collection.find.withArgs(sinon.match({})).returns(find);
+    var filesCollection = {};
+    filesCollection.find = sinon.stub();
+    filesCollection.find.withArgs(sinon.match({})).returns(find);
     var db = {};
     db.collection = sinon.stub();
-    db.collection.withArgs('files').returns(collection);
+    db.collection.withArgs('files').returns(filesCollection);
     api.connectDb(db);
   }
 
@@ -244,7 +244,7 @@ describe('GET /api/files', function() {
 
 describe('POST /api/files/upload', function() {
 
-  var collection;
+  var filesCollection;
   var docMatcher = function(expected) {
     if (!Array.isArray(expected)) {
       throw new Error('expected an array');
@@ -270,22 +270,22 @@ describe('POST /api/files/upload', function() {
   }
 
   beforeEach(function() {
-    collection = {};
-    collection.insert = sinon.stub();
-    collection.find = sinon.stub();
+    filesCollection = {};
+    filesCollection.insert = sinon.stub();
+    filesCollection.find = sinon.stub();
     var toArray = sinon.stub();
     toArray.withArgs(sinon.match.func).yieldsAsync(null, [{_id: '001', name: '14103101.CSV'}]);
-    collection.find.withArgs(sinon.match({state: 'uploaded'})).returns({toArray: toArray});
-    collection.findAndModify = sinon.stub();
-    collection.findAndModify.withArgs({"_id": "001"}, null, sinon.match.object, sinon.match.func).yieldsAsync(null, {_id: '001', raw: 'abc'});
+    filesCollection.find.withArgs(sinon.match({state: 'uploaded'})).returns({toArray: toArray});
+    filesCollection.findAndModify = sinon.stub();
+    filesCollection.findAndModify.withArgs({"_id": "001"}, null, sinon.match.object, sinon.match.func).yieldsAsync(null, {_id: '001', raw: 'abc'});
     var db = {};
     db.collection = sinon.stub();
-    db.collection.withArgs('files').returns(collection);
+    db.collection.withArgs('files').returns(filesCollection);
     api.connectDb(db);
   });
 
   it('should upload a single file', function(done) {
-    collection.insert.withArgs(docMatcher([{name: 'api.js'}]), sinon.match.func).yieldsAsync(null, [{}]);
+    filesCollection.insert.withArgs(docMatcher([{name: 'api.js'}]), sinon.match.func).yieldsAsync(null, [{}]);
     request(app)
       .post('/api/files/upload')
       .attach('uploadedFile', 'test/server/api.js')
@@ -297,7 +297,7 @@ describe('POST /api/files/upload', function() {
   });
 
   it('should upload multiple files', function(done) {
-    collection.insert.withArgs(docMatcher([{name: 'api.js'}, {name: 'api.js'}]), sinon.match.func).yieldsAsync(null, [{}, {}]);
+    filesCollection.insert.withArgs(docMatcher([{name: 'api.js'}, {name: 'api.js'}]), sinon.match.func).yieldsAsync(null, [{}, {}]);
     request(app)
       .post('/api/files/upload')
       .attach('uploadedFile', 'test/server/api.js')
@@ -310,7 +310,7 @@ describe('POST /api/files/upload', function() {
   });
 
   it('should return a server error when insert fails', function(done) {
-    collection.insert.withArgs(docMatcher([{name: 'api.js'}]), sinon.match.func).yieldsAsync({name: 'error', message: 'failed'}, null);
+    filesCollection.insert.withArgs(docMatcher([{name: 'api.js'}]), sinon.match.func).yieldsAsync({name: 'error', message: 'failed'}, null);
     request(app)
       .post('/api/files/upload')
       .attach('uploadedFile', 'test/server/api.js')
