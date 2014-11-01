@@ -152,7 +152,10 @@ function parseFile(file, errorCb, rawCb) {
         if (err) {
           errorCb(err);
         }
-        console.log('saved path ' + result.filename);
+        if (result.length !== 1) {
+          console.log('expected one path to be inserted, not ' + result.length);
+        }
+        console.log('saved path ' + result[0].filename + ' with ' + result[0].points.length + ' points');
         db.collection('files').findAndModify({"_id": file._id}, null, {"$set": {state: "parsed"}, "$unset": {raw: 1}}, {new: true}, function(err, file) {
           if (err) {
             errorCb(err);
