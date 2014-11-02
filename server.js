@@ -75,6 +75,7 @@ var PathApp = function() {
     this.app.delete('/api/users/:id', userAuth.doAuth, api.removeUser);
     this.app.get('/api/files', adminAuth.doAuth, api.listFiles);
     this.app.post('/api/files/upload', adminAuth.doAuth, api.uploadFiles);
+    this.app.get('/api/paths', userAuth.doAuth, api.listPaths);
   };
 
   this.start = function() {

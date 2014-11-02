@@ -212,3 +212,16 @@ exports.uploadFiles = function(req, res) {
     });
   });
 };
+
+exports.listPaths = function(req, res) {
+  db.collection('paths').find({}, {filename: 0, "points.timestamp": 0}).toArray(function(err, paths) {
+    if (err) {
+      return res.json(500, {name: err.name, msg: err.message});
+    }
+    for (var i = 0; i < paths.length; i++) {
+      paths[i].id = paths[i]._id;
+      delete paths[i]._id;
+    }
+    return res.json(200, paths);
+  });
+};

@@ -25,6 +25,7 @@ app.post('/api/connect', api.connect);
 app.post('/api/disconnect', api.disconnect);
 app.get('/api/files', api.listFiles);
 app.post('/api/files/upload', api.uploadFiles);
+app.get('/api/paths', api.listPaths);
 
 describe('GET /api/users/:id', function() {
 
@@ -325,6 +326,39 @@ describe('POST /api/files/upload', function() {
       .end(function(err, res) {
         if (err) return done(err);
         res.body.should.eql({"name": "error", "msg": "failed"});
+        done();
+      });
+  });
+});
+
+describe('GET /api/paths', function() {
+
+  var paths= [
+    {"_id": "001", "filename": "14110200.CSV", "points": [{"timestamp": "2014-11-02T14:12:34.000Z", "lat": 12.345678, "lng": -123.456789}]},
+    {"_id": "002", "filename": "14110201.CSV", "points": [{"timestamp": "2014-11-02T14:33:17.000Z", "lat": -23.456789, "lng": 112.345678}]}
+  ];
+
+  before(function() {
+    var find = {};
+    find.toArray = sinon.stub();
+    find.toArray.withArgs(sinon.match.func).yieldsAsync(null, paths);
+    var pathsCollection = {};
+    pathsCollection.find = sinon.stub();
+    pathsCollection.find.withArgs(sinon.match({}), sinon.match.object).returns(find);
+    var db = {};
+    db.collection = sinon.stub();
+    db.collection.withArgs('paths').returns(pathsCollection);
+    api.connectDb(db);
+  });
+
+  it('should respond with a list of paths', function(done) {
+    request(app)
+      .get('/api/paths')
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .end(function(err, res) {
+        if (err) return done(err);
+        res.body.should.eql(paths);
         done();
       });
   });
