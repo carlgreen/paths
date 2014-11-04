@@ -73,6 +73,14 @@
       return deferred.promise;
     };
 
+    var listPaths = function() {
+      return $http.get('api/paths');
+    };
+
+    service.listPaths = function() {
+      return listPaths();
+    };
+
     return service;
   });
 })();

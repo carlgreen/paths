@@ -73,12 +73,26 @@
     start();
   });
 
-  pathsControllers.controller('MapController', function($scope) {
+  pathsControllers.controller('MapController', function($scope, PathsService) {
     var mapOptions = {
       center: { lat: 0, lng: 180},
       zoom: 2
     };
     $scope.map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+    PathsService.listPaths()
+      .then(function(paths) {
+        $scope.paths = paths.data;
+        for (var i = 0; i < paths.data.length; i++) {
+          var path = paths.data[i];
+          for (var j = 0; j < path.points.length; j++) {
+            new google.maps.Marker({
+              map: $scope.map,
+              position: new google.maps.LatLng(path.points[j].lat, path.points[j].lng)
+            });
+          }
+        }
+      });
   });
 
   pathsControllers.controller('AdminController', function($scope, PathsService) {
