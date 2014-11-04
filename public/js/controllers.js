@@ -73,6 +73,9 @@
     start();
   });
 
+  pathsControllers.controller('MapController', function() {
+  });
+
   pathsControllers.controller('AdminController', function($scope, PathsService) {
     $scope.files = [];
 
