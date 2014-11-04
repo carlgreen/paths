@@ -73,7 +73,12 @@
     start();
   });
 
-  pathsControllers.controller('MapController', function() {
+  pathsControllers.controller('MapController', function($scope) {
+    var mapOptions = {
+      center: { lat: 0, lng: 180},
+      zoom: 2
+    };
+    $scope.map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
   });
 
   pathsControllers.controller('AdminController', function($scope, PathsService) {
