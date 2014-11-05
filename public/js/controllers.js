@@ -80,13 +80,26 @@
     };
     $scope.map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
+    function onPathClick(pathObject) {
+      google.maps.event.addListener(pathObject, 'click', function() {
+        var bounds = new google.maps.LatLngBounds();
+        var path = pathObject.getPath();
+        for (var i = 0; i < path.getLength(); i++) {
+          bounds.extend(path.getAt(i));
+        }
+        $scope.map.fitBounds(bounds);
+      });
+    }
+
     PathsService.listPaths()
       .then(function(paths) {
         $scope.paths = paths.data;
         for (var i = 0; i < paths.data.length; i++) {
-          new google.maps.Polyline({
+          var path = new google.maps.Polyline({
             path: paths.data[i].points
-          }).setMap($scope.map);
+          });
+          onPathClick(path);
+          path.setMap($scope.map);
         }
       });
   });
