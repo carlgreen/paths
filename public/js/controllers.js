@@ -84,13 +84,9 @@
       .then(function(paths) {
         $scope.paths = paths.data;
         for (var i = 0; i < paths.data.length; i++) {
-          var path = paths.data[i];
-          for (var j = 0; j < path.points.length; j++) {
-            new google.maps.Marker({
-              map: $scope.map,
-              position: new google.maps.LatLng(path.points[j].lat, path.points[j].lng)
-            });
-          }
+          new google.maps.Polyline({
+            path: paths.data[i].points
+          }).setMap($scope.map);
         }
       });
   });
