@@ -53,9 +53,16 @@
     start();
   });
 
-  pathsControllers.controller('PathsController', function($scope, PathsService) {
+  pathsControllers.controller('PathsController', function($rootScope, $scope, PathsService) {
     $scope.immediateFailed = false;
     $scope.userProfile = undefined;
+
+    $scope.$on('error', function(obj, error) {
+      console.error(error.msg);
+      if ('detail' in error) {
+        console.info(error.detail);
+      }
+    });
 
     var signIn = function(authResult) {
       $scope.$apply(function() {
@@ -74,15 +81,14 @@
         PathsService.connect(authResult)
           .then(signedIn)
           .catch(function(response) {
-            console.error('connect error: ' + response.status);
-            console.info(response.data);
+            $rootScope.$broadcast('error', {msg: 'connect error: ' + response.status, detail: response.data});
             signedOut();
           });
       } else if (authResult.error) {
         if (authResult.error === 'immediate_failed') {
           $scope.immediateFailed = true;
         } else {
-          console.error('auth error: ' + authResult.error);
+          $rootScope.$broadcast('error', {msg: 'auth error: ' + authResult.error});
         }
       }
     };
@@ -106,7 +112,7 @@
       PathsService.disconnect($scope.userProfile._id)
         .then(signedOut)
         .catch(function(response) {
-          console.error('disconnect error: ' + response.status);
+          $rootScope.$broadcast('error', {msg: 'disconnect error: ' + response.status});
         });
     };
 
