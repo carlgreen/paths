@@ -53,7 +53,7 @@ describe('Auth', function() {
         user_id: '124'
       }
     }, {
-      status: function(status) {
+      send: function(status) {
         status.should.equal(401);
         done();
       }
@@ -67,7 +67,7 @@ describe('Auth', function() {
         user_id: '126'
       }
     }, {
-      status: function(status) {
+      send: function(status) {
         status.should.equal(401);
         done();
       }
@@ -81,7 +81,7 @@ describe('Auth', function() {
         user_id: '125'
       }
     }, {
-      status: function(status) {
+      send: function(status) {
         status.should.equal(500);
         done();
       }
@@ -93,7 +93,7 @@ describe('Auth', function() {
       path: '/other',
       session: {}
     }, {
-      status: function(status) {
+      send: function(status) {
         status.should.equal(401);
         done();
       }
@@ -110,7 +110,7 @@ describe('Auth', function() {
         user_id: '123'
       }
     }, {
-      status: function(status) {
+      send: function(status) {
         status.should.equal(500);
         done();
       }

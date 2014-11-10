@@ -14,20 +14,20 @@ module.exports = function(role) {
         return;
       }
       if (!('user_id' in req.session)) {
-        res.status(401);
+        res.send(401);
         return;
       }
       if (typeof db === 'undefined') {
-        res.status(500);
+        res.send(500);
         return;
       }
       var id = req.session.user_id;
       db.collection('roles').findOne({"_id": id, "roles": role}, {fields: {_id: 1}}, function(err, roles) {
         if (err) {
-          return res.status(500);
+          return res.send(500);
         }
         if (roles === null) {
-          return res.status(401);
+          return res.send(401);
         }
         next();
       });
