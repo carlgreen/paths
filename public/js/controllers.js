@@ -56,12 +56,14 @@
   pathsControllers.controller('PathsController', function($rootScope, $scope, PathsService) {
     $scope.immediateFailed = false;
     $scope.userProfile = undefined;
+    $scope.errors = [];
 
     $scope.$on('error', function(obj, error) {
       console.error(error.msg);
       if ('detail' in error) {
         console.info(error.detail);
       }
+      $scope.errors.push(error);
     });
 
     var signIn = function(authResult) {

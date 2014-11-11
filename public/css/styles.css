@@ -1,0 +1,11 @@
+.errorBox {
+  position: absolute;
+  z-index: 100;
+  top: 0;
+  left: 50%;
+  margin-left: -200px;
+  width: 400px;
+  border: 1px solid #000;
+  background-color: #FFF;
+  text-align: center;
+}

@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <title>paths</title>
+    <link rel="stylesheet" href="css/styles.css">
   </head>
   <body>
     <div data-ng-controller="PathsController">
@@ -11,6 +12,13 @@
         <a href="{{userProfile.link}}">{{userProfile.name}}</a>
         <button data-ng-click="disconnect()">Disconnect</button>
       </span>
+      <div class="errorBox" data-ng-show="errors.length > 0">
+        <ol>
+          <li data-ng-repeat="error in errors">
+            {{error.msg}}: {{error.detail}}
+          </li>
+        </ol>
+      </div>
     </div>
     <div data-ng-view></div>
     <!-- bower:js -->
