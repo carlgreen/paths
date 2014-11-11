@@ -66,6 +66,10 @@
       $scope.errors.push(error);
     });
 
+    $scope.clearErrors = function() {
+      $scope.errors = [];
+    };
+
     var signIn = function(authResult) {
       $scope.$apply(function() {
         $scope.processAuth(authResult);
