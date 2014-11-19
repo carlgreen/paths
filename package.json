@@ -41,7 +41,8 @@
     "supertest": "~0.13.0"
   },
   "scripts": {
-    "test": "grunt test"
+    "test": "grunt test",
+    "prepublish": "grunt build"
   },
   "config": {
     "blanket": {

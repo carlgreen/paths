@@ -160,6 +160,8 @@ module.exports = function(grunt) {
     }
   });
 
+  grunt.registerTask('build', []);
+
   grunt.registerTask('default', [
     'newer:jshint',
     'test'
