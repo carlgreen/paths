@@ -93,6 +93,33 @@ module.exports = function(grunt) {
       }
     },
 
+    clean: {
+      dist: {
+        files: [{
+          dot: true,
+          src: [
+            'dist/{,*/}*',
+            '!dist/.git*'
+          ]
+        }]
+      }
+    },
+
+    copy: {
+      dist: {
+        files: [{
+          expand: true,
+          dot: true,
+          cwd: 'public',
+          dest: 'dist',
+          src: [
+            '*.html',
+            'views/{,*/}*.html'
+          ]
+        }]
+      }
+    },
+
     karma: {
       unit: {
         configFile: 'test/karma.conf.js',
@@ -160,7 +187,10 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.registerTask('build', []);
+  grunt.registerTask('build', [
+    'clean:dist',
+    'copy:dist'
+  ]);
 
   grunt.registerTask('default', [
     'newer:jshint',
