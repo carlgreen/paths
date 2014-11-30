@@ -6,6 +6,9 @@
     $routeProvider.when('/', {
       controller: 'MapController',
       templateUrl: 'views/map.html'
+    }).when('/start', {
+      controller: 'StartController',
+      templateUrl: 'views/start.html'
     }).when('/admin/files', {
       controller: 'AdminController',
       templateUrl: 'views/admin/files.html'

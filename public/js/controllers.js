@@ -9,6 +9,32 @@
   };
 
   var pathsControllers = angular.module('pathsControllers', []);
+
+  pathsControllers.controller('StartController', function($scope) {
+
+    var signIn = function(authResult) {
+      $scope.$apply(function() {
+        $scope.authResult = authResult;
+      });
+    };
+
+    var renderSignIn = function() {
+      gapi.signin.render('myGsignin', {
+        'callback': signIn,
+        'clientid': Conf.clientId,
+        'scope': Conf.scopes,
+        'cookiepolicy': Conf.cookiepolicy,
+        'accesstype': Conf.accessType
+      });
+    };
+
+    var start = function() {
+      renderSignIn();
+    };
+
+    start();
+  });
+
   pathsControllers.controller('PathsController', function($scope, PathsService) {
     $scope.immediateFailed = false;
     $scope.userProfile = undefined;
