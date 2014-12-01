@@ -13,10 +13,23 @@
   pathsControllers.controller('StartController', function($scope) {
 
     var signIn = function(authResult) {
-      console.log(authResult);
+      $scope.authResult = authResult;
       $scope.$apply(function() {
-        $scope.authResult = authResult;
+        $scope.processAuth(authResult);
       });
+    };
+
+    $scope.processAuth = function(authResult) {
+      /* jshint camelcase: false */
+      if (authResult.access_token) {
+        console.log('going well');
+      } else if (authResult.error) {
+        if (authResult.error === 'immediate_failed') {
+          console.error('immediate failure');
+        } else {
+          console.error('auth error: ' + authResult.error);
+        }
+      }
     };
 
     var renderSignIn = function() {
