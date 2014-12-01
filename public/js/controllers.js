@@ -13,6 +13,7 @@
   pathsControllers.controller('StartController', function($scope) {
 
     var signIn = function(authResult) {
+      console.apply(authResult);
       $scope.$apply(function() {
         $scope.authResult = authResult;
       });
