@@ -96,7 +96,7 @@
       renderSignIn();
     };
 
-    start();
+    // start();
   });
 
   pathsControllers.controller('MapController', function($scope, PathsService) {
