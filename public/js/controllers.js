@@ -19,7 +19,7 @@
     };
 
     var renderSignIn = function() {
-      gapi.signin.render('myGsignin', {
+      gapi.signin.render('startGsignin', {
         'callback': signIn,
         'clientid': Conf.clientId,
         'scope': Conf.scopes,
