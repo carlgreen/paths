@@ -12,14 +12,32 @@
 
   pathsControllers.controller('StartController', function($scope) {
 
+    $scope.immediateFailed = true;
+
     var signIn = function(authResult) {
+      $scope.authResult = authResult;
       $scope.$apply(function() {
-        $scope.authResult = authResult;
+        $scope.processAuth(authResult);
       });
     };
 
+    $scope.processAuth = function(authResult) {
+      /* jshint camelcase: false */
+      if (authResult.access_token) {
+        $scope.immediateFailed = false;
+        console.log('going well');
+      } else if (authResult.error) {
+        if (authResult.error === 'immediate_failed') {
+          console.error('immediate failure');
+          $scope.immediateFailed = true;
+        } else {
+          console.error('auth error: ' + authResult.error);
+        }
+      }
+    };
+
     var renderSignIn = function() {
-      gapi.signin.render('myGsignin', {
+      gapi.signin.render('startGsignin', {
         'callback': signIn,
         'clientid': Conf.clientId,
         'scope': Conf.scopes,
@@ -96,7 +114,7 @@
       renderSignIn();
     };
 
-    start();
+    // start();
   });
 
   pathsControllers.controller('MapController', function($scope, PathsService) {
