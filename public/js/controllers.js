@@ -12,6 +12,8 @@
 
   pathsControllers.controller('StartController', function($scope) {
 
+    $scope.immediateFailed = false;
+
     var signIn = function(authResult) {
       $scope.authResult = authResult;
       $scope.$apply(function() {
@@ -22,10 +24,12 @@
     $scope.processAuth = function(authResult) {
       /* jshint camelcase: false */
       if (authResult.access_token) {
+        $scope.immediateFailed = false;
         console.log('going well');
       } else if (authResult.error) {
         if (authResult.error === 'immediate_failed') {
           console.error('immediate failure');
+          $scope.immediateFailed = true;
         } else {
           console.error('auth error: ' + authResult.error);
         }
