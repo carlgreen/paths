@@ -12,7 +12,7 @@
 
   pathsControllers.controller('StartController', function($scope) {
 
-    $scope.immediateFailed = false;
+    $scope.immediateFailed = true;
 
     var signIn = function(authResult) {
       $scope.authResult = authResult;
