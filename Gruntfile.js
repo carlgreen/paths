@@ -8,12 +8,22 @@ module.exports = function(grunt) {
   // Time how long tasks take. Can help when optimizing build times
   require('time-grunt')(grunt);
 
+  // Configurable paths for the application
+  var appConfig = {
+    app: 'public',
+    dist: 'dist'
+  };
+
   // Define the configuration for all the tasks
   grunt.initConfig({
+
+    // Project settings
+    yeoman: appConfig,
+
     // Watches files for changes and runs tasks based on the changed files
     watch: {
       js: {
-        files: ['public/js/{,*/}*.js'],
+        files: ['<%= yeoman.app %>/js/{,*/}*.js'],
         tasks: ['newer:jshint:all'],
         options: {
           livereload: true
@@ -32,7 +42,7 @@ module.exports = function(grunt) {
       },
       livereload: {
         files: [
-          'public/**/*'
+          '<%= yeoman.app %>/**/*'
         ],
         options: {
           livereload: true
@@ -83,7 +93,7 @@ module.exports = function(grunt) {
         src: ['server.js', 'app/{,*/}*.js', 'routes/{,*/}*.js']
       },
       all: [
-        'public/js/{,*/}*.js'
+        '<%= yeoman.app %>/js/{,*/}*.js'
       ],
       test: {
         options: {
@@ -98,8 +108,8 @@ module.exports = function(grunt) {
         files: [{
           dot: true,
           src: [
-            'dist/{,*/}*',
-            '!dist/.git*'
+            '<%= yeoman.dist %>/{,*/}*',
+            '!<%= yeoman.dist %>/.git*'
           ]
         }]
       }
@@ -110,8 +120,8 @@ module.exports = function(grunt) {
         files: [{
           expand: true,
           dot: true,
-          cwd: 'public',
-          dest: 'dist',
+          cwd: '<%= yeoman.app %>',
+          dest: '<%= yeoman.dist %>',
           src: [
             '*.html',
             'views/{,*/}*.html'
