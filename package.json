@@ -46,7 +46,7 @@
   },
   "scripts": {
     "test": "grunt test",
-    "prepublish": "grunt build"
+    "prepublish": "bower install; grunt build"
   },
   "config": {
     "blanket": {
