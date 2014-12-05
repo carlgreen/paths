@@ -50,6 +50,7 @@ var PathApp = function() {
     this.app.use(session({secret: process.env.SESSION_SECRET}));
     this.app.set('port', process.env.OPENSHIFT_NODEJS_PORT || 1337);
     this.app.use(express.static(path.join(__dirname, 'public')));
+    this.app.use('/bower_components',  express.static(path.join(__dirname, 'bower_components')));
 
     var mongo_connection_string = 'mongodb://localhost:27017/paths';
     if (process.env.OPENSHIFT_MONGODB_DB_PASSWORD) {

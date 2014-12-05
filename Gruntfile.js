@@ -10,7 +10,7 @@ module.exports = function(grunt) {
 
   // Configurable paths for the application
   var appConfig = {
-    app: 'public',
+    app: require('./bower.json').appPath || 'public',
     dist: 'dist'
   };
 
@@ -22,6 +22,10 @@ module.exports = function(grunt) {
 
     // Watches files for changes and runs tasks based on the changed files
     watch: {
+      bower: {
+        files: ['bower.json'],
+        tasks: ['wiredep']
+      },
       js: {
         files: ['<%= yeoman.app %>/js/{,*/}*.js'],
         tasks: ['newer:jshint:all'],
@@ -115,6 +119,13 @@ module.exports = function(grunt) {
       }
     },
 
+    wiredep: {
+      app: {
+        src: ['<%= yeoman.app %>/index.html'],
+        ignorePath:  /..\//
+      }
+    },
+
     copy: {
       dist: {
         files: [{
@@ -171,6 +182,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('serve', 'Compile then start an express web server', function () {
     grunt.task.run([
+        'wiredep',
         'express:dev',
         'open',
         'watch'
@@ -199,6 +211,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('build', [
     'clean:dist',
+    'wiredep',
     'copy:dist'
   ]);
 
