@@ -47,7 +47,7 @@
   },
   "scripts": {
     "test": "grunt test",
-    "prepublish": "bower install; grunt build"
+    "prepublish": "HOME=$HOME/app-root/runtime bower install; grunt build"
   },
   "config": {
     "blanket": {
