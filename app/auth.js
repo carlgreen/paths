@@ -14,20 +14,21 @@ module.exports = function(role) {
         return;
       }
       if (!('user_id' in req.session)) {
-        res.send(401);
+        res.json(401, {error: 'no user_id'});
         return;
       }
       if (typeof db === 'undefined') {
-        res.send(500);
+        res.json(500, {error: 'no database defined'});
         return;
       }
       var id = req.session.user_id;
       db.collection('roles').findOne({"_id": id, "roles": role}, {fields: {_id: 1}}, function(err, roles) {
         if (err) {
-          return res.send(500);
+          console.error(err);
+          return res.json(500, {error: err});
         }
         if (roles === null) {
-          return res.send(401);
+          return res.json(401, {error: 'no roles'});
         }
         next();
       });
