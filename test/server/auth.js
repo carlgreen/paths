@@ -55,7 +55,7 @@ describe('Auth', function() {
     }, {
       json: function(status, json) {
         status.should.equal(401);
-        json.should.eql({"error": "no roles"});
+        json.should.eql({"error": "user does not have the 'the-role' role"});
         done();
       }
     }, unexpectedNext(done));
@@ -70,7 +70,7 @@ describe('Auth', function() {
     }, {
       json: function(status, json) {
         status.should.equal(401);
-        json.should.eql({"error": "no roles"});
+        json.should.eql({"error": "user does not have the 'the-role' role"});
         done();
       }
     }, unexpectedNext(done));
@@ -98,7 +98,7 @@ describe('Auth', function() {
     }, {
       json: function(status, json) {
         status.should.equal(401);
-        json.should.eql({"error": "no user_id"});
+        json.should.eql({"error": "no user in session"});
         done();
       }
     }, unexpectedNext(done));

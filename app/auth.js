@@ -14,7 +14,7 @@ module.exports = function(role) {
         return;
       }
       if (!('user_id' in req.session)) {
-        res.json(401, {error: 'no user_id'});
+        res.json(401, {error: 'no user in session'});
         return;
       }
       if (typeof db === 'undefined') {
@@ -28,7 +28,7 @@ module.exports = function(role) {
           return res.json(500, {error: err});
         }
         if (roles === null) {
-          return res.json(401, {error: 'no roles'});
+          return res.json(401, {error: 'user does not have the \'' + role + '\' role'});
         }
         next();
       });
