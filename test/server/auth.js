@@ -53,8 +53,9 @@ describe('Auth', function() {
         user_id: '124'
       }
     }, {
-      send: function(status) {
+      json: function(status, json) {
         status.should.equal(401);
+        json.should.eql({"error": "no roles"});
         done();
       }
     }, unexpectedNext(done));
@@ -67,8 +68,9 @@ describe('Auth', function() {
         user_id: '126'
       }
     }, {
-      send: function(status) {
+      json: function(status, json) {
         status.should.equal(401);
+        json.should.eql({"error": "no roles"});
         done();
       }
     }, unexpectedNext(done));
@@ -81,8 +83,9 @@ describe('Auth', function() {
         user_id: '125'
       }
     }, {
-      send: function(status) {
+      json: function(status, json) {
         status.should.equal(500);
+        json.should.eql({"error": {}});
         done();
       }
     }, unexpectedNext(done));
@@ -93,8 +96,9 @@ describe('Auth', function() {
       path: '/other',
       session: {}
     }, {
-      send: function(status) {
+      json: function(status, json) {
         status.should.equal(401);
+        json.should.eql({"error": "no user_id"});
         done();
       }
     }, unexpectedNext(done));
@@ -110,8 +114,9 @@ describe('Auth', function() {
         user_id: '123'
       }
     }, {
-      send: function(status) {
+      json: function(status, error) {
         status.should.equal(500);
+        error.should.eql({"error": "no database defined"});
         done();
       }
     }, unexpectedNext(done));
