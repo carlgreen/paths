@@ -8,11 +8,11 @@
   <body>
     <div data-ng-controller="PathsController">
       <span id="myGsignin" data-ng-show="immediateFailed"></span>
-      <span data-ng-show="userProfile">
+      <span data-ng-cloak data-ng-show="userProfile">
         <a href="{{userProfile.link}}">{{userProfile.name}}</a>
         <button data-ng-click="disconnect()">Disconnect</button>
       </span>
-      <div class="errorBox" data-ng-show="errors.length > 0" data-ng-click="clearErrors()">
+      <div data-ng-cloak class="errorBox" data-ng-show="errors.length > 0" data-ng-click="clearErrors()">
         <ol>
           <li data-ng-repeat="error in errors">
             {{error.msg}}: {{error.detail}}
