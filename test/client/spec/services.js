@@ -1,5 +1,47 @@
 'use strict';
 
+describe('Service: ErrorService', function () {
+
+  // load the controller's module
+  beforeEach(module('paths'));
+
+  var service,
+    rootScope;
+
+  // Initialize the service
+  beforeEach(inject(function (_$rootScope_, ErrorService) {
+    service = ErrorService;
+
+    rootScope = _$rootScope_;
+    spyOn(_$rootScope_, '$broadcast').andCallThrough();
+  }));
+
+  it('should have no errors initially', function() {
+    expect(service.errors).toEqual([]);
+  });
+
+  it('should add an error', function() {
+    expect(service.errors).toEqual([]);
+
+    service.add({msg: 'abc'});
+
+    expect(service.errors).toEqual([{msg: 'abc'}]);
+    expect(rootScope.$broadcast).toHaveBeenCalledWith('error', {msg: 'abc'});
+  });
+
+  it('should handle multiple errors', function() {
+    expect(service.errors).toEqual([]);
+
+    service.add({msg: 'abc'});
+    service.add({msg: 'def'});
+
+    expect(service.errors).toEqual([{msg: 'abc'}, {msg: 'def'}]);
+    expect(rootScope.$broadcast).toHaveBeenCalledWith('error', {msg: 'abc'});
+    expect(rootScope.$broadcast).toHaveBeenCalledWith('error', {msg: 'def'});
+  });
+
+});
+
 describe('Service: PathsService', function () {
 
   // load the controller's module

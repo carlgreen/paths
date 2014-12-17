@@ -2,6 +2,28 @@
   'use strict';
 
   var pathsServices = angular.module('pathsServices', []);
+
+  pathsServices.factory('ErrorService', function($rootScope) {
+    var errorService = {};
+
+    errorService.errors = [];
+
+    errorService.add = function(error) {
+      console.error(error.msg);
+      if ('detail' in error) {
+        console.info(error.detail);
+      }
+      this.errors.push(error);
+      this.broadcastErrors(error);
+    };
+
+    errorService.broadcastErrors = function(error) {
+      $rootScope.$broadcast('error', error);
+    };
+
+    return errorService;
+  });
+
   pathsServices.service('PathsService', function($http, $rootScope, $q) {
     var service = {};
 
