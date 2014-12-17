@@ -3,7 +3,7 @@
 
   var pathsServices = angular.module('pathsServices', []);
 
-  pathsServices.factory('ErrorService', function($rootScope) {
+  pathsServices.factory('ErrorService', function() {
     var errorService = {};
 
     errorService.errors = [];
@@ -14,11 +14,13 @@
         console.info(error.detail);
       }
       this.errors.push(error);
-      this.broadcastErrors(error);
+      if (this.errorHandler) {
+        this.errorHandler(error);
+      }
     };
 
-    errorService.broadcastErrors = function(error) {
-      $rootScope.$broadcast('error', error);
+    errorService.onError = function(errorHandler) {
+      this.errorHandler = errorHandler;
     };
 
     return errorService;

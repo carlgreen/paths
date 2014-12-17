@@ -6,14 +6,14 @@ describe('Service: ErrorService', function () {
   beforeEach(module('paths'));
 
   var service,
-    rootScope;
+    errorCb;
 
   // Initialize the service
-  beforeEach(inject(function (_$rootScope_, ErrorService) {
+  beforeEach(inject(function (ErrorService) {
     service = ErrorService;
 
-    rootScope = _$rootScope_;
-    spyOn(_$rootScope_, '$broadcast').andCallThrough();
+    errorCb = jasmine.createSpy('errorCb');
+    service.onError(errorCb);
   }));
 
   it('should have no errors initially', function() {
@@ -26,7 +26,7 @@ describe('Service: ErrorService', function () {
     service.add({msg: 'abc'});
 
     expect(service.errors).toEqual([{msg: 'abc'}]);
-    expect(rootScope.$broadcast).toHaveBeenCalledWith('error', {msg: 'abc'});
+    expect(errorCb).toHaveBeenCalledWith({msg: 'abc'});
   });
 
   it('should handle multiple errors', function() {
@@ -36,8 +36,8 @@ describe('Service: ErrorService', function () {
     service.add({msg: 'def'});
 
     expect(service.errors).toEqual([{msg: 'abc'}, {msg: 'def'}]);
-    expect(rootScope.$broadcast).toHaveBeenCalledWith('error', {msg: 'abc'});
-    expect(rootScope.$broadcast).toHaveBeenCalledWith('error', {msg: 'def'});
+    expect(errorCb).toHaveBeenCalledWith({msg: 'abc'});
+    expect(errorCb).toHaveBeenCalledWith({msg: 'def'});
   });
 
 });
