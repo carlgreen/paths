@@ -186,4 +186,14 @@ describe('Controller: AdminController', function() {
     // should be called on load and after upload
     expect(pathsService.listFiles.callCount).toBe(2);
   });
+
+  it('should clear file list once uploaded', function() {
+    scope.uploadFiles = [{'name': 'afile'}, {'name': 'bfile'}];
+    scope.doUploadFiles();
+
+    queryDeferred.resolve();
+    $rootScope.$apply();
+
+    expect(scope.uploadFiles).toBeUndefined();
+  });
 });

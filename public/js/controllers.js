@@ -170,9 +170,14 @@
         });
     };
 
+    var clearFiles = function() {
+      $scope.uploadFiles = undefined;
+    };
+
     listFiles();
 
     $scope.setFiles = function(element) {
+      $scope.element = element;
       $scope.$apply(function() {
         // Turn the FileList object into an Array
         $scope.uploadFiles = [];
@@ -184,7 +189,8 @@
 
     $scope.doUploadFiles = function() {
       PathsService.uploadFiles($scope.uploadFiles).
-        then(listFiles);
+        then(listFiles).
+        then(clearFiles);
     };
   });
 })();
