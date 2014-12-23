@@ -160,7 +160,7 @@
       });
   });
 
-  pathsControllers.controller('AdminController', function($scope, PathsService) {
+  pathsControllers.controller('AdminController', function($scope, PathsService, ErrorService) {
     $scope.files = [];
 
     var listFiles = function() {
@@ -187,10 +187,15 @@
       });
     };
 
+    var filesUploaded = function() {
+      ErrorService.add({msg: 'files uploaded'});
+      clearFiles();
+      listFiles();
+    };
+
     $scope.doUploadFiles = function() {
       PathsService.uploadFiles($scope.uploadFiles).
-        then(listFiles).
-        then(clearFiles);
+        then(filesUploaded);
     };
   });
 })();
