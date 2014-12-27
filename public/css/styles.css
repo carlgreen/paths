@@ -1,3 +1,14 @@
+.profile {
+  position: absolute;
+  z-index: 99;
+  padding: 1px;
+  border: 1px solid #000;
+  background-color: #FFF;
+  opacity: 0.8;
+  top: 0px;
+  left: 0px;
+}
+
 .errorBox {
   position: absolute;
   z-index: 100;
