@@ -361,7 +361,10 @@ describe('GET /api/paths', function() {
       .expect('Content-Type', /json/)
       .end(function(err, res) {
         if (err) return done(err);
-        res.body.should.eql(paths);
+        res.body.should.eql([
+          {"id": "001", "filename": "14110200.CSV", "points": [{"timestamp": "2014-11-02T14:12:34.000Z", "lat": 12.345678, "lng": -123.456789}]},
+          {"id": "002", "filename": "14110201.CSV", "points": [{"timestamp": "2014-11-02T14:33:17.000Z", "lat": -23.456789, "lng": 112.345678}]}
+        ]);
         done();
       });
   });
@@ -464,7 +467,10 @@ describe('GET /api/trips', function() {
       .expect('Content-Type', /json/)
       .end(function(err, res) {
         if (err) return done(err);
-        res.body.should.eql(trips);
+        res.body.should.eql([
+          {"id": "trip-0", "name": "trip 0"},
+          {"id": "trip-1", "name": "trip 1"}
+        ]);
         done();
       });
   });

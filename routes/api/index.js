@@ -4,6 +4,7 @@ var fs = require('fs'),
   multiparty = require('multiparty'),
   ObjectID = require('mongodb').ObjectID,
   parser = require('../../app/parser'),
+  mongo_util = require('../../app/mongo_util'),
   slug = require('slug');
 
 var REDIRECT_URL = 'postmessage';
@@ -122,10 +123,7 @@ exports.listFiles = function(req, res) {
     if (err) {
       return res.json(500, {name: err.name, msg: err.message});
     }
-    for (var i = 0; i < files.length; i++) {
-      files[i].id = files[i]._id;
-      delete files[i]._id;
-    }
+    mongo_util.demongofy_ids(files);
     return res.json(200, files);
   });
 };
@@ -220,10 +218,7 @@ exports.listPaths = function(req, res) {
     if (err) {
       return res.json(500, {name: err.name, msg: err.message});
     }
-    for (var i = 0; i < paths.length; i++) {
-      paths[i].id = paths[i]._id;
-      delete paths[i]._id;
-    }
+    mongo_util.demongofy_ids(paths);
     return res.json(200, paths);
   });
 };
@@ -254,10 +249,7 @@ exports.listTrips = function(req, res) {
     if (err) {
       return res.json(500, {name: err.name, msg: err.message});
     }
-    for (var i = 0; i < trips.length; i++) {
-      trips[i].id = trips[i]._id;
-      delete trips[i]._id;
-    }
+    mongo_util.demongofy_ids(trips);
     return res.json(200, trips);
   });
 };
