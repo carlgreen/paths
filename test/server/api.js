@@ -28,6 +28,7 @@ app.get('/api/files', api.listFiles);
 app.post('/api/files/upload', api.uploadFiles);
 app.get('/api/paths', api.listPaths);
 app.put('/api/trip', api.saveTrip);
+app.get('/api/trip', api.listTrips);
 
 describe('GET /api/users/:id', function() {
 
@@ -428,6 +429,39 @@ describe('POST /api/trip', function() {
         res.body.should.eql({"name": "error", "msg": "failed"});
         sinon.assert.calledWith(tripsCollection.update, {"_id": "trip-1", "name": "trip 1"}, {"_id": "trip-1", "name": "trip 1"}, {"upsert": true}, sinon.match.func);
         sinon.assert.calledWith(pathsCollection.update, {"_id": {$in: [new ObjectID("111122223333444455556666")]}}, {"$set": {"trip": "trip-1"}}, {"multi": true}, sinon.match.func);
+        done();
+      });
+  });
+});
+
+describe('GET /api/trip', function() {
+
+  var trips= [
+    {"_id": "trip-0", "name": "trip 0"},
+    {"_id": "trip-1", "name": "trip 1"}
+  ];
+
+  before(function() {
+    var find = {};
+    find.toArray = sinon.stub();
+    find.toArray.withArgs(sinon.match.func).yieldsAsync(null, trips);
+    var tripsCollection = {};
+    tripsCollection.find = sinon.stub();
+    tripsCollection.find.withArgs({}, sinon.match.object).returns(find);
+    var db = {};
+    db.collection = sinon.stub();
+    db.collection.withArgs('trips').returns(tripsCollection);
+    api.connectDb(db);
+  });
+
+  it('should respond with a list of trips', function(done) {
+    request(app)
+      .get('/api/trip')
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .end(function(err, res) {
+        if (err) return done(err);
+        res.body.should.eql(trips);
         done();
       });
   });

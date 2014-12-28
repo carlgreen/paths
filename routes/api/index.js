@@ -248,3 +248,16 @@ exports.saveTrip = function(req, res) {
     });
   });
 };
+
+exports.listTrips = function(req, res) {
+  db.collection('trips').find({}, {}).toArray(function(err, trips) {
+    if (err) {
+      return res.json(500, {name: err.name, msg: err.message});
+    }
+    for (var i = 0; i < trips.length; i++) {
+      trips[i].id = trips[i]._id;
+      delete trips[i]._id;
+    }
+    return res.json(200, trips);
+  });
+};
