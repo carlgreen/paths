@@ -135,10 +135,15 @@ describe('Controller: AdminController', function() {
       uploadFiles: function() {
         queryDeferred = $q.defer();
         return queryDeferred.promise;
+      },
+      saveTrip: function() {
+        queryDeferred = $q.defer();
+        return queryDeferred.promise;
       }
     };
     spyOn(pathsService, 'listFiles').andCallThrough();
     spyOn(pathsService, 'uploadFiles').andCallThrough();
+    spyOn(pathsService, 'saveTrip').andCallThrough();
 
     AdminController = $controller('AdminController', {
       $scope: scope,
@@ -195,5 +200,20 @@ describe('Controller: AdminController', function() {
     $rootScope.$apply();
 
     expect(scope.uploadFiles).toBeUndefined();
+  });
+
+  it('should call save trip', function() {
+    scope.tripName = 'trip1';
+    scope.files = [
+      {'id': '1'},
+      {'id': '2', 'selected': true},
+      {'id': '3', 'selected': true},
+      {'id': '4'}
+    ];
+
+    scope.saveTrip();
+    $rootScope.$apply();
+
+    expect(pathsService.saveTrip).toHaveBeenCalledWith({name: 'trip1', paths: ['2', '3']});
   });
 });

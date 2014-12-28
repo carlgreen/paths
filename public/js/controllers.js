@@ -163,7 +163,7 @@
       });
   });
 
-  pathsControllers.controller('AdminController', function($scope, PathsService, ErrorService) {
+  pathsControllers.controller('AdminController', function($scope, filterFilter, PathsService, ErrorService) {
     $scope.files = [];
 
     var listFiles = function() {
@@ -199,6 +199,29 @@
     $scope.doUploadFiles = function() {
       PathsService.uploadFiles($scope.uploadFiles).
         then(filesUploaded);
+    };
+
+    $scope.showTripView = false;
+
+    $scope.showTrip = function() {
+      $scope.showTripView = true;
+    };
+
+    $scope.saveTrip = function() {
+      var trip = {
+        name: $scope.tripName,
+        paths: []
+      };
+      angular.forEach($scope.files, function(file) {
+        if (file.selected) {
+          trip.paths.push(file.id);
+        }
+      });
+      PathsService.saveTrip(trip).
+        then(function(response) {
+          console.log(response);
+          console.log('saved trip');
+        });
     };
   });
 })();

@@ -1,18 +1,25 @@
 <h1>files</h1>
 <table>
   <tr>
+    <th/>
     <th>ID</th>
     <th>Name</th>
     <th>State</th>
     <th>Uploaded</th>
   </tr>
   <tr ng-repeat="file in files">
+    <td><input type="checkbox" data-ng-model="file.selected"></td>
     <td>{{file.id}}</td>
     <td>{{file.name}}</td>
     <td>{{file.state}}</td>
     <td><time datetime="{{file.uploaded}}">{{file.uploaded | date:'medium'}}</time></td>
   </tr>
 </table>
+<input type="button" data-ng-click="showTrip()" value="Set trip" />
+<div data-ng-cloak data-ng-show="showTripView">
+  <input data-ng-model="tripName" placeholder="trip name"/>
+  <input type="button" data-ng-click="saveTrip()" value="Save" />
+</div>
 <h2>upload</h2>
 <label for="fileToUpload">Select a File to Upload</label><br />
 <input id="fileToUpload" type="file" multiple onchange="angular.element(this).scope().setFiles(this)">
