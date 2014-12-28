@@ -26,6 +26,7 @@ app.post('/api/disconnect', api.disconnect);
 app.get('/api/files', api.listFiles);
 app.post('/api/files/upload', api.uploadFiles);
 app.get('/api/paths', api.listPaths);
+app.put('/api/trip', api.saveTrip);
 
 describe('GET /api/users/:id', function() {
 
@@ -359,6 +360,47 @@ describe('GET /api/paths', function() {
       .end(function(err, res) {
         if (err) return done(err);
         res.body.should.eql(paths);
+        done();
+      });
+  });
+});
+
+describe('POST /api/trip', function() {
+
+  var pathsCollection = {};
+
+  beforeEach(function() {
+    pathsCollection.findAndModify = sinon.stub();
+    pathsCollection.findAndModify.withArgs(sinon.match({"_id": {$in: ["1"]}}), null, sinon.match.object, sinon.match.func).yieldsAsync({name: 'error', message: 'failed'}, null);
+    pathsCollection.findAndModify.withArgs(sinon.match.object, null, sinon.match.object, sinon.match.func).yieldsAsync(null, {});
+
+    var db = {};
+    db.collection = sinon.stub();
+    db.collection.withArgs('paths').returns(pathsCollection);
+    api.connectDb(db);
+  });
+
+  it('should add the trip to the paths', function(done) {
+    request(app)
+      .put('/api/trip')
+      .send({name: 'trip1', paths: ["2", "3"]})
+      .expect(204)
+      .end(function(err, res) {
+        if (err) return done(err);
+        sinon.assert.calledWith(pathsCollection.findAndModify, sinon.match({"_id": {$in: ["2", "3"]}}), null, sinon.match({"$set": {"name": "trip1"}}), sinon.match.func);
+        done();
+      });
+  });
+
+  it('should return a server error when paths update fails', function(done) {
+    request(app)
+      .put('/api/trip')
+      .send({name: 'trip1', paths: ["1"]})
+      .expect(500)
+      .expect('Content-Type', /json/)
+      .end(function(err, res) {
+        if (err) return done(err);
+        res.body.should.eql({"name": "error", "msg": "failed"});
         done();
       });
   });
