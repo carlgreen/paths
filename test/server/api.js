@@ -388,18 +388,18 @@ describe('POST /api/trip', function() {
   });
 
   it('should return a server error and not update paths if trip update failed', function(done) {
-      request(app)
-        .put('/api/trip')
-        .send({name: 'trip 0', paths: ["000011112222333344445555"]})
-        .expect(500)
-        .expect('Content-Type', /json/)
-        .end(function(err, res) {
-          if (err) return done(err);
-          res.body.should.eql({"name": "error", "msg": "duplicate ID"});
-          sinon.assert.calledWith(tripsCollection.update, {"_id": "trip-0", "name": "trip 0"}, {"_id": "trip-0", "name": "trip 0"}, {"upsert": true}, sinon.match.func);
-          sinon.assert.notCalled(pathsCollection.update);
-          done();
-        });
+    request(app)
+      .put('/api/trip')
+      .send({name: 'trip 0', paths: ["000011112222333344445555"]})
+      .expect(500)
+      .expect('Content-Type', /json/)
+      .end(function(err, res) {
+        if (err) return done(err);
+        res.body.should.eql({"name": "error", "msg": "duplicate ID"});
+        sinon.assert.calledWith(tripsCollection.update, {"_id": "trip-0", "name": "trip 0"}, {"_id": "trip-0", "name": "trip 0"}, {"upsert": true}, sinon.match.func);
+        sinon.assert.notCalled(pathsCollection.update);
+        done();
+      });
   });
 
   it('should add the trip and the trip to the paths', function(done) {
