@@ -367,26 +367,48 @@ describe('GET /api/paths', function() {
 
 describe('POST /api/trip', function() {
 
-  var pathsCollection = {};
+  var tripsCollection = {},
+    pathsCollection = {};
 
   beforeEach(function() {
+    tripsCollection.update = sinon.stub();
+    tripsCollection.update.withArgs(sinon.match({"_id": "trip0", "name": "trip0"}), sinon.match({"_id": "trip0", "name": "trip0"}), {"upsert": true}, sinon.match.func).yieldsAsync({name: 'error', message: 'duplicate ID'}, null);
+    tripsCollection.update.withArgs(sinon.match.object, sinon.match.object, {"upsert": true}, sinon.match.func).yieldsAsync(null, {});
+
     pathsCollection.findAndModify = sinon.stub();
     pathsCollection.findAndModify.withArgs(sinon.match({"_id": {$in: ["1"]}}), null, sinon.match.object, sinon.match.func).yieldsAsync({name: 'error', message: 'failed'}, null);
     pathsCollection.findAndModify.withArgs(sinon.match.object, null, sinon.match.object, sinon.match.func).yieldsAsync(null, {});
 
     var db = {};
     db.collection = sinon.stub();
+    db.collection.withArgs('trips').returns(tripsCollection);
     db.collection.withArgs('paths').returns(pathsCollection);
     api.connectDb(db);
   });
 
-  it('should add the trip to the paths', function(done) {
+  it('should return a server error and not update paths if trip update failed', function(done) {
+      request(app)
+        .put('/api/trip')
+        .send({name: 'trip0', paths: ["0"]})
+        .expect(500)
+        .expect('Content-Type', /json/)
+        .end(function(err, res) {
+          if (err) return done(err);
+          res.body.should.eql({"name": "error", "msg": "duplicate ID"});
+          sinon.assert.calledWith(tripsCollection.update, sinon.match({"_id": "trip0", "name": "trip0"}), sinon.match({"_id": "trip0", "name": "trip0"}), {"upsert": true}, sinon.match.func);
+          sinon.assert.notCalled(pathsCollection.findAndModify);
+          done();
+        });
+  });
+
+  it('should add the trip and the trip to the paths', function(done) {
     request(app)
       .put('/api/trip')
       .send({name: 'trip1', paths: ["2", "3"]})
       .expect(204)
       .end(function(err, res) {
         if (err) return done(err);
+        sinon.assert.calledWith(tripsCollection.update, sinon.match({"_id": "trip1", "name": "trip1"}), sinon.match({"_id": "trip1", "name": "trip1"}), {"upsert": true}, sinon.match.func);
         sinon.assert.calledWith(pathsCollection.findAndModify, sinon.match({"_id": {$in: ["2", "3"]}}), null, sinon.match({"$set": {"name": "trip1"}}), sinon.match.func);
         done();
       });
@@ -401,6 +423,8 @@ describe('POST /api/trip', function() {
       .end(function(err, res) {
         if (err) return done(err);
         res.body.should.eql({"name": "error", "msg": "failed"});
+        sinon.assert.calledWith(tripsCollection.update, sinon.match({"_id": "trip1", "name": "trip1"}), sinon.match({"_id": "trip1", "name": "trip1"}), {"upsert": true}, sinon.match.func);
+        sinon.assert.calledWith(pathsCollection.findAndModify, sinon.match({"_id": {$in: ["1"]}}), null, sinon.match({"$set": {"name": "trip1"}}), sinon.match.func);
         done();
       });
   });

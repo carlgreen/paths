@@ -228,10 +228,15 @@ exports.listPaths = function(req, res) {
 
 exports.saveTrip = function(req, res) {
   var trip = req.body;
-  db.collection('paths').findAndModify({_id: {$in: trip.paths}}, null, {"$set": {"name": trip.name}}, function(err) {
+  db.collection('trips').update({_id: trip.name, name: trip.name}, {_id: trip.name, name: trip.name}, {upsert: true}, function(err) {
     if (err) {
       return res.json(500, {name: err.name, msg: err.message});
     }
-    return res.status(204).end();
+    db.collection('paths').findAndModify({_id: {$in: trip.paths}}, null, {"$set": {"name": trip.name}}, function(err) {
+      if (err) {
+        return res.json(500, {name: err.name, msg: err.message});
+      }
+      return res.status(204).end();
+    });
   });
 };
