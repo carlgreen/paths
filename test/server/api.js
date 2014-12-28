@@ -10,7 +10,8 @@ var should = require('should'),
     cookieSignature = require("cookie-parser/node_modules/cookie-signature"),
     api = require('../../routes/api'),
     request = require('supertest'),
-    sinon = require('sinon');
+    sinon = require('sinon'),
+    ObjectID = require('mongodb').ObjectID;
 
 var app = express();
 app.use(bodyParser.json());
@@ -376,7 +377,7 @@ describe('POST /api/trip', function() {
     tripsCollection.update.withArgs(sinon.match.object, sinon.match.object, {"upsert": true}, sinon.match.func).yieldsAsync(null, {});
 
     pathsCollection.findAndModify = sinon.stub();
-    pathsCollection.findAndModify.withArgs({"_id": {$in: ["1"]}}, null, sinon.match.object, sinon.match.func).yieldsAsync({name: 'error', message: 'failed'}, null);
+    pathsCollection.findAndModify.withArgs({"_id": {$in: [new ObjectID("111122223333444455556666")]}}, null, sinon.match.object, sinon.match.func).yieldsAsync({name: 'error', message: 'failed'}, null);
     pathsCollection.findAndModify.withArgs(sinon.match.object, null, sinon.match.object, sinon.match.func).yieldsAsync(null, {});
 
     var db = {};
@@ -389,7 +390,7 @@ describe('POST /api/trip', function() {
   it('should return a server error and not update paths if trip update failed', function(done) {
       request(app)
         .put('/api/trip')
-        .send({name: 'trip0', paths: ["0"]})
+        .send({name: 'trip0', paths: ["00001111222333344445555"]})
         .expect(500)
         .expect('Content-Type', /json/)
         .end(function(err, res) {
@@ -404,12 +405,12 @@ describe('POST /api/trip', function() {
   it('should add the trip and the trip to the paths', function(done) {
     request(app)
       .put('/api/trip')
-      .send({name: 'trip1', paths: ["2", "3"]})
+      .send({name: 'trip1', paths: ["222233334444555566667777", "333344445555666677778888"]})
       .expect(204)
       .end(function(err, res) {
         if (err) return done(err);
         sinon.assert.calledWith(tripsCollection.update, {"_id": "trip1", "name": "trip1"}, {"_id": "trip1", "name": "trip1"}, {"upsert": true}, sinon.match.func);
-        sinon.assert.calledWith(pathsCollection.findAndModify, {"_id": {$in: ["2", "3"]}}, null, {"$set": {"name": "trip1"}}, sinon.match.func);
+        sinon.assert.calledWith(pathsCollection.findAndModify, {"_id": {$in: [new ObjectID("222233334444555566667777"), new ObjectID("333344445555666677778888")]}}, null, {"$set": {"name": "trip1"}}, sinon.match.func);
         done();
       });
   });
@@ -417,14 +418,14 @@ describe('POST /api/trip', function() {
   it('should return a server error when paths update fails', function(done) {
     request(app)
       .put('/api/trip')
-      .send({name: 'trip1', paths: ["1"]})
+      .send({name: 'trip1', paths: ["111122223333444455556666"]})
       .expect(500)
       .expect('Content-Type', /json/)
       .end(function(err, res) {
         if (err) return done(err);
         res.body.should.eql({"name": "error", "msg": "failed"});
         sinon.assert.calledWith(tripsCollection.update, {"_id": "trip1", "name": "trip1"}, {"_id": "trip1", "name": "trip1"}, {"upsert": true}, sinon.match.func);
-        sinon.assert.calledWith(pathsCollection.findAndModify, {"_id": {$in: ["1"]}}, null, {"$set": {"name": "trip1"}}, sinon.match.func);
+        sinon.assert.calledWith(pathsCollection.findAndModify, {"_id": {$in: [new ObjectID("111122223333444455556666")]}}, null, {"$set": {"name": "trip1"}}, sinon.match.func);
         done();
       });
   });

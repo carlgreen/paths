@@ -2,6 +2,7 @@ var fs = require('fs'),
   googleapis = require('googleapis'),
   https = require('https'),
   multiparty = require('multiparty'),
+  ObjectID = require('mongodb').ObjectID,
   parser = require('../../app/parser');
 
 var REDIRECT_URL = 'postmessage';
@@ -232,7 +233,11 @@ exports.saveTrip = function(req, res) {
     if (err) {
       return res.json(500, {name: err.name, msg: err.message});
     }
-    db.collection('paths').findAndModify({_id: {$in: trip.paths}}, null, {"$set": {"name": trip.name}}, function(err) {
+    var pathIds = [];
+    trip.paths.forEach(function(id) {
+      pathIds.push(new ObjectID(id));
+    });
+    db.collection('paths').findAndModify({_id: {$in: pathIds}}, null, {"$set": {"name": trip.name}}, function(err) {
       if (err) {
         return res.json(500, {name: err.name, msg: err.message});
       }
