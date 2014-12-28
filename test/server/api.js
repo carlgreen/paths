@@ -376,9 +376,9 @@ describe('POST /api/trip', function() {
     tripsCollection.update.withArgs({"_id": "trip0", "name": "trip0"}, {"_id": "trip0", "name": "trip0"}, {"upsert": true}, sinon.match.func).yieldsAsync({name: 'error', message: 'duplicate ID'}, null);
     tripsCollection.update.withArgs(sinon.match.object, sinon.match.object, {"upsert": true}, sinon.match.func).yieldsAsync(null, {});
 
-    pathsCollection.findAndModify = sinon.stub();
-    pathsCollection.findAndModify.withArgs({"_id": {$in: [new ObjectID("111122223333444455556666")]}}, null, sinon.match.object, sinon.match.func).yieldsAsync({name: 'error', message: 'failed'}, null);
-    pathsCollection.findAndModify.withArgs(sinon.match.object, null, sinon.match.object, sinon.match.func).yieldsAsync(null, {});
+    pathsCollection.update = sinon.stub();
+    pathsCollection.update.withArgs({"_id": {$in: [new ObjectID("111122223333444455556666")]}}, sinon.match.object, {"multi": true}, sinon.match.func).yieldsAsync({name: 'error', message: 'failed'}, null);
+    pathsCollection.update.withArgs(sinon.match.object, sinon.match.object, {"multi": true}, sinon.match.func).yieldsAsync(null, {});
 
     var db = {};
     db.collection = sinon.stub();
@@ -397,7 +397,7 @@ describe('POST /api/trip', function() {
           if (err) return done(err);
           res.body.should.eql({"name": "error", "msg": "duplicate ID"});
           sinon.assert.calledWith(tripsCollection.update, {"_id": "trip0", "name": "trip0"}, {"_id": "trip0", "name": "trip0"}, {"upsert": true}, sinon.match.func);
-          sinon.assert.notCalled(pathsCollection.findAndModify);
+          sinon.assert.notCalled(pathsCollection.update);
           done();
         });
   });
@@ -410,7 +410,7 @@ describe('POST /api/trip', function() {
       .end(function(err, res) {
         if (err) return done(err);
         sinon.assert.calledWith(tripsCollection.update, {"_id": "trip1", "name": "trip1"}, {"_id": "trip1", "name": "trip1"}, {"upsert": true}, sinon.match.func);
-        sinon.assert.calledWith(pathsCollection.findAndModify, {"_id": {$in: [new ObjectID("222233334444555566667777"), new ObjectID("333344445555666677778888")]}}, null, {"$set": {"trip": "trip1"}}, sinon.match.func);
+        sinon.assert.calledWith(pathsCollection.update, {"_id": {$in: [new ObjectID("222233334444555566667777"), new ObjectID("333344445555666677778888")]}}, {"$set": {"trip": "trip1"}}, {"multi": true}, sinon.match.func);
         done();
       });
   });
@@ -425,7 +425,7 @@ describe('POST /api/trip', function() {
         if (err) return done(err);
         res.body.should.eql({"name": "error", "msg": "failed"});
         sinon.assert.calledWith(tripsCollection.update, {"_id": "trip1", "name": "trip1"}, {"_id": "trip1", "name": "trip1"}, {"upsert": true}, sinon.match.func);
-        sinon.assert.calledWith(pathsCollection.findAndModify, {"_id": {$in: [new ObjectID("111122223333444455556666")]}}, null, {"$set": {"trip": "trip1"}}, sinon.match.func);
+        sinon.assert.calledWith(pathsCollection.update, {"_id": {$in: [new ObjectID("111122223333444455556666")]}}, {"$set": {"trip": "trip1"}}, {"multi": true}, sinon.match.func);
         done();
       });
   });

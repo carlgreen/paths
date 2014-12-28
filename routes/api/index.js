@@ -237,7 +237,7 @@ exports.saveTrip = function(req, res) {
     trip.paths.forEach(function(id) {
       pathIds.push(new ObjectID(id));
     });
-    db.collection('paths').findAndModify({_id: {$in: pathIds}}, null, {"$set": {"trip": trip.name}}, function(err) {
+    db.collection('paths').update({_id: {$in: pathIds}}, {"$set": {"trip": trip.name}}, {"multi": true}, function(err) {
       if (err) {
         return res.json(500, {name: err.name, msg: err.message});
       }
