@@ -77,6 +77,7 @@ var PathApp = function() {
     this.app.get('/api/files', adminAuth.doAuth, api.listFiles);
     this.app.post('/api/files/upload', adminAuth.doAuth, api.uploadFiles);
     this.app.get('/api/paths', userAuth.doAuth, api.listPaths);
+    this.app.put('/api/trip', adminAuth.doAuth, api.saveTrip);
   };
 
   this.start = function() {
