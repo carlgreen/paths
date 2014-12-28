@@ -440,11 +440,9 @@ describe('GET /api/trip', function() {
     {"_id": "trip-0", "name": "trip 0"},
     {"_id": "trip-1", "name": "trip 1"}
   ];
+  var find = {};
 
   before(function() {
-    var find = {};
-    find.toArray = sinon.stub();
-    find.toArray.withArgs(sinon.match.func).yieldsAsync(null, trips);
     var tripsCollection = {};
     tripsCollection.find = sinon.stub();
     tripsCollection.find.withArgs({}, sinon.match.object).returns(find);
@@ -454,7 +452,12 @@ describe('GET /api/trip', function() {
     api.connectDb(db);
   });
 
+  beforeEach(function() {
+    find.toArray = sinon.stub();
+  });
+
   it('should respond with a list of trips', function(done) {
+    find.toArray.withArgs(sinon.match.func).yieldsAsync(null, trips);
     request(app)
       .get('/api/trip')
       .expect(200)
@@ -462,6 +465,19 @@ describe('GET /api/trip', function() {
       .end(function(err, res) {
         if (err) return done(err);
         res.body.should.eql(trips);
+        done();
+      });
+  });
+
+  it('should return a server error when query fails', function(done) {
+    find.toArray.withArgs(sinon.match.func).yieldsAsync({name: 'error', message: 'failed'}, null);
+    request(app)
+      .get('/api/trip')
+      .expect(500)
+      .expect('Content-Type', /json/)
+      .end(function(err, res) {
+        if (err) return done(err);
+        res.body.should.eql({"name": "error", "msg": "failed"});
         done();
       });
   });
