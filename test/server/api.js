@@ -27,8 +27,8 @@ app.post('/api/disconnect', api.disconnect);
 app.get('/api/files', api.listFiles);
 app.post('/api/files/upload', api.uploadFiles);
 app.get('/api/paths', api.listPaths);
-app.put('/api/trip', api.saveTrip);
-app.get('/api/trip', api.listTrips);
+app.put('/api/trips', api.saveTrip);
+app.get('/api/trips', api.listTrips);
 
 describe('GET /api/users/:id', function() {
 
@@ -367,7 +367,7 @@ describe('GET /api/paths', function() {
   });
 });
 
-describe('POST /api/trip', function() {
+describe('POST /api/trips', function() {
 
   var tripsCollection = {},
     pathsCollection = {};
@@ -390,7 +390,7 @@ describe('POST /api/trip', function() {
 
   it('should return a server error and not update paths if trip update failed', function(done) {
     request(app)
-      .put('/api/trip')
+      .put('/api/trips')
       .send({name: 'trip 0', paths: ["000011112222333344445555"]})
       .expect(500)
       .expect('Content-Type', /json/)
@@ -405,7 +405,7 @@ describe('POST /api/trip', function() {
 
   it('should add the trip and the trip to the paths', function(done) {
     request(app)
-      .put('/api/trip')
+      .put('/api/trips')
       .send({name: 'trip 1', paths: ["222233334444555566667777", "333344445555666677778888"]})
       .expect(200)
       .expect('Content-Type', /json/)
@@ -420,7 +420,7 @@ describe('POST /api/trip', function() {
 
   it('should return a server error when paths update fails', function(done) {
     request(app)
-      .put('/api/trip')
+      .put('/api/trips')
       .send({name: 'trip 1', paths: ["111122223333444455556666"]})
       .expect(500)
       .expect('Content-Type', /json/)
@@ -434,7 +434,7 @@ describe('POST /api/trip', function() {
   });
 });
 
-describe('GET /api/trip', function() {
+describe('GET /api/trips', function() {
 
   var trips= [
     {"_id": "trip-0", "name": "trip 0"},
@@ -459,7 +459,7 @@ describe('GET /api/trip', function() {
   it('should respond with a list of trips', function(done) {
     find.toArray.withArgs(sinon.match.func).yieldsAsync(null, trips);
     request(app)
-      .get('/api/trip')
+      .get('/api/trips')
       .expect(200)
       .expect('Content-Type', /json/)
       .end(function(err, res) {
@@ -472,7 +472,7 @@ describe('GET /api/trip', function() {
   it('should return a server error when query fails', function(done) {
     find.toArray.withArgs(sinon.match.func).yieldsAsync({name: 'error', message: 'failed'}, null);
     request(app)
-      .get('/api/trip')
+      .get('/api/trips')
       .expect(500)
       .expect('Content-Type', /json/)
       .end(function(err, res) {

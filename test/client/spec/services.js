@@ -177,7 +177,7 @@ describe('Service: PathsService', function () {
   });
 
   it('should save the trip', function() {
-    $httpBackend.expectPUT('api/trip', {'name': 'trip1', 'paths': ['2', '3']}).respond(200);
+    $httpBackend.expectPUT('api/trips', {'name': 'trip1', 'paths': ['2', '3']}).respond(200);
 
     var success;
     service.saveTrip({name: 'trip1', paths: ['2', '3']})

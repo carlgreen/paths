@@ -106,7 +106,7 @@
     };
 
     var saveTrip = function(trip) {
-      return $http.put('api/trip', trip);
+      return $http.put('api/trips', trip);
     };
 
     service.saveTrip = function(trip) {
