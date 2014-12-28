@@ -406,9 +406,11 @@ describe('POST /api/trip', function() {
     request(app)
       .put('/api/trip')
       .send({name: 'trip 1', paths: ["222233334444555566667777", "333344445555666677778888"]})
-      .expect(204)
+      .expect(200)
+      .expect('Content-Type', /json/)
       .end(function(err, res) {
         if (err) return done(err);
+        res.body.should.eql({"id": "trip-1", "name": "trip 1"});
         sinon.assert.calledWith(tripsCollection.update, {"_id": "trip-1", "name": "trip 1"}, {"_id": "trip-1", "name": "trip 1"}, {"upsert": true}, sinon.match.func);
         sinon.assert.calledWith(pathsCollection.update, {"_id": {$in: [new ObjectID("222233334444555566667777"), new ObjectID("333344445555666677778888")]}}, {"$set": {"trip": "trip-1"}}, {"multi": true}, sinon.match.func);
         done();

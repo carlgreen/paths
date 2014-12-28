@@ -244,7 +244,7 @@ exports.saveTrip = function(req, res) {
         return res.json(500, {name: err.name, msg: err.message});
       }
       console.log('set trip to ' + tripId + ' on ' + modified + ' paths');
-      return res.status(204).end();
+      return res.json(200, {id: tripId, name: trip.name});
     });
   });
 };

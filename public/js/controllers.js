@@ -219,8 +219,7 @@
       });
       PathsService.saveTrip(trip).
         then(function(response) {
-          console.log(response);
-          console.log('saved trip');
+          console.log('saved trip ' + JSON.stringify(response.data));
         });
     };
   });
