@@ -390,7 +390,7 @@ describe('POST /api/trip', function() {
   it('should return a server error and not update paths if trip update failed', function(done) {
       request(app)
         .put('/api/trip')
-        .send({name: 'trip0', paths: ["00001111222333344445555"]})
+        .send({name: 'trip0', paths: ["000011112222333344445555"]})
         .expect(500)
         .expect('Content-Type', /json/)
         .end(function(err, res) {
