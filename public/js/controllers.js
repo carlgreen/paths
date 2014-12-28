@@ -132,7 +132,10 @@
   pathsControllers.controller('MapController', function($scope, PathsService) {
     var mapOptions = {
       center: { lat: 0, lng: 180},
-      zoom: 2
+      zoom: 2,
+      zoomControlOptions: {
+        position: google.maps.ControlPosition.RIGHT_TOP
+      }
     };
     $scope.map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
