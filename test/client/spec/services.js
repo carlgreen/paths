@@ -175,4 +175,17 @@ describe('Service: PathsService', function () {
     request.respond(500);
     expect(success).toBe(false);
   });
+
+  it('should save the trip', function() {
+    $httpBackend.expectPUT('api/trip', {'name': 'trip1', 'paths': ['2', '3']}).respond(200);
+
+    var success;
+    service.saveTrip({name: 'trip1', paths: ['2', '3']})
+      .then(function() {
+        success = true;
+      });
+
+    $httpBackend.flush();
+    expect(success).toBe(true);
+  });
 });

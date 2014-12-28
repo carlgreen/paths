@@ -105,6 +105,14 @@
       return listPaths();
     };
 
+    var saveTrip = function(trip) {
+      return $http.put('api/trip', trip);
+    };
+
+    service.saveTrip = function(trip) {
+      return saveTrip(trip);
+    };
+
     return service;
   });
 })();
