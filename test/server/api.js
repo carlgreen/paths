@@ -374,11 +374,11 @@ describe('POST /api/trip', function() {
   beforeEach(function() {
     tripsCollection.update = sinon.stub();
     tripsCollection.update.withArgs({"_id": "trip0", "name": "trip0"}, {"_id": "trip0", "name": "trip0"}, {"upsert": true}, sinon.match.func).yieldsAsync({name: 'error', message: 'duplicate ID'}, null);
-    tripsCollection.update.withArgs(sinon.match.object, sinon.match.object, {"upsert": true}, sinon.match.func).yieldsAsync(null, {});
+    tripsCollection.update.withArgs(sinon.match.object, sinon.match.object, {"upsert": true}, sinon.match.func).yieldsAsync(null, 0);
 
     pathsCollection.update = sinon.stub();
     pathsCollection.update.withArgs({"_id": {$in: [new ObjectID("111122223333444455556666")]}}, sinon.match.object, {"multi": true}, sinon.match.func).yieldsAsync({name: 'error', message: 'failed'}, null);
-    pathsCollection.update.withArgs(sinon.match.object, sinon.match.object, {"multi": true}, sinon.match.func).yieldsAsync(null, {});
+    pathsCollection.update.withArgs(sinon.match.object, sinon.match.object, {"multi": true}, sinon.match.func).yieldsAsync(null, 0);
 
     var db = {};
     db.collection = sinon.stub();
