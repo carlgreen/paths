@@ -410,7 +410,7 @@ describe('POST /api/trip', function() {
       .end(function(err, res) {
         if (err) return done(err);
         sinon.assert.calledWith(tripsCollection.update, {"_id": "trip1", "name": "trip1"}, {"_id": "trip1", "name": "trip1"}, {"upsert": true}, sinon.match.func);
-        sinon.assert.calledWith(pathsCollection.findAndModify, {"_id": {$in: [new ObjectID("222233334444555566667777"), new ObjectID("333344445555666677778888")]}}, null, {"$set": {"name": "trip1"}}, sinon.match.func);
+        sinon.assert.calledWith(pathsCollection.findAndModify, {"_id": {$in: [new ObjectID("222233334444555566667777"), new ObjectID("333344445555666677778888")]}}, null, {"$set": {"trip": "trip1"}}, sinon.match.func);
         done();
       });
   });
@@ -425,7 +425,7 @@ describe('POST /api/trip', function() {
         if (err) return done(err);
         res.body.should.eql({"name": "error", "msg": "failed"});
         sinon.assert.calledWith(tripsCollection.update, {"_id": "trip1", "name": "trip1"}, {"_id": "trip1", "name": "trip1"}, {"upsert": true}, sinon.match.func);
-        sinon.assert.calledWith(pathsCollection.findAndModify, {"_id": {$in: [new ObjectID("111122223333444455556666")]}}, null, {"$set": {"name": "trip1"}}, sinon.match.func);
+        sinon.assert.calledWith(pathsCollection.findAndModify, {"_id": {$in: [new ObjectID("111122223333444455556666")]}}, null, {"$set": {"trip": "trip1"}}, sinon.match.func);
         done();
       });
   });
