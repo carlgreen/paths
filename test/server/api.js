@@ -373,7 +373,7 @@ describe('POST /api/trip', function() {
 
   beforeEach(function() {
     tripsCollection.update = sinon.stub();
-    tripsCollection.update.withArgs({"_id": "trip0", "name": "trip0"}, {"_id": "trip0", "name": "trip0"}, {"upsert": true}, sinon.match.func).yieldsAsync({name: 'error', message: 'duplicate ID'}, null);
+    tripsCollection.update.withArgs({"_id": "trip-0", "name": "trip 0"}, {"_id": "trip-0", "name": "trip 0"}, {"upsert": true}, sinon.match.func).yieldsAsync({name: 'error', message: 'duplicate ID'}, null);
     tripsCollection.update.withArgs(sinon.match.object, sinon.match.object, {"upsert": true}, sinon.match.func).yieldsAsync(null, 0);
 
     pathsCollection.update = sinon.stub();
@@ -390,13 +390,13 @@ describe('POST /api/trip', function() {
   it('should return a server error and not update paths if trip update failed', function(done) {
       request(app)
         .put('/api/trip')
-        .send({name: 'trip0', paths: ["000011112222333344445555"]})
+        .send({name: 'trip 0', paths: ["000011112222333344445555"]})
         .expect(500)
         .expect('Content-Type', /json/)
         .end(function(err, res) {
           if (err) return done(err);
           res.body.should.eql({"name": "error", "msg": "duplicate ID"});
-          sinon.assert.calledWith(tripsCollection.update, {"_id": "trip0", "name": "trip0"}, {"_id": "trip0", "name": "trip0"}, {"upsert": true}, sinon.match.func);
+          sinon.assert.calledWith(tripsCollection.update, {"_id": "trip-0", "name": "trip 0"}, {"_id": "trip-0", "name": "trip 0"}, {"upsert": true}, sinon.match.func);
           sinon.assert.notCalled(pathsCollection.update);
           done();
         });
@@ -405,12 +405,12 @@ describe('POST /api/trip', function() {
   it('should add the trip and the trip to the paths', function(done) {
     request(app)
       .put('/api/trip')
-      .send({name: 'trip1', paths: ["222233334444555566667777", "333344445555666677778888"]})
+      .send({name: 'trip 1', paths: ["222233334444555566667777", "333344445555666677778888"]})
       .expect(204)
       .end(function(err, res) {
         if (err) return done(err);
-        sinon.assert.calledWith(tripsCollection.update, {"_id": "trip1", "name": "trip1"}, {"_id": "trip1", "name": "trip1"}, {"upsert": true}, sinon.match.func);
-        sinon.assert.calledWith(pathsCollection.update, {"_id": {$in: [new ObjectID("222233334444555566667777"), new ObjectID("333344445555666677778888")]}}, {"$set": {"trip": "trip1"}}, {"multi": true}, sinon.match.func);
+        sinon.assert.calledWith(tripsCollection.update, {"_id": "trip-1", "name": "trip 1"}, {"_id": "trip-1", "name": "trip 1"}, {"upsert": true}, sinon.match.func);
+        sinon.assert.calledWith(pathsCollection.update, {"_id": {$in: [new ObjectID("222233334444555566667777"), new ObjectID("333344445555666677778888")]}}, {"$set": {"trip": "trip-1"}}, {"multi": true}, sinon.match.func);
         done();
       });
   });
@@ -418,14 +418,14 @@ describe('POST /api/trip', function() {
   it('should return a server error when paths update fails', function(done) {
     request(app)
       .put('/api/trip')
-      .send({name: 'trip1', paths: ["111122223333444455556666"]})
+      .send({name: 'trip 1', paths: ["111122223333444455556666"]})
       .expect(500)
       .expect('Content-Type', /json/)
       .end(function(err, res) {
         if (err) return done(err);
         res.body.should.eql({"name": "error", "msg": "failed"});
-        sinon.assert.calledWith(tripsCollection.update, {"_id": "trip1", "name": "trip1"}, {"_id": "trip1", "name": "trip1"}, {"upsert": true}, sinon.match.func);
-        sinon.assert.calledWith(pathsCollection.update, {"_id": {$in: [new ObjectID("111122223333444455556666")]}}, {"$set": {"trip": "trip1"}}, {"multi": true}, sinon.match.func);
+        sinon.assert.calledWith(tripsCollection.update, {"_id": "trip-1", "name": "trip 1"}, {"_id": "trip-1", "name": "trip 1"}, {"upsert": true}, sinon.match.func);
+        sinon.assert.calledWith(pathsCollection.update, {"_id": {$in: [new ObjectID("111122223333444455556666")]}}, {"$set": {"trip": "trip-1"}}, {"multi": true}, sinon.match.func);
         done();
       });
   });

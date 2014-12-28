@@ -3,7 +3,8 @@ var fs = require('fs'),
   https = require('https'),
   multiparty = require('multiparty'),
   ObjectID = require('mongodb').ObjectID,
-  parser = require('../../app/parser');
+  parser = require('../../app/parser'),
+  slug = require('slug');
 
 var REDIRECT_URL = 'postmessage';
 var oauth2Client = new googleapis.OAuth2Client(process.env.CLIENT_ID, process.env.CLIENT_SECRET, REDIRECT_URL);
@@ -229,7 +230,8 @@ exports.listPaths = function(req, res) {
 
 exports.saveTrip = function(req, res) {
   var trip = req.body;
-  db.collection('trips').update({_id: trip.name, name: trip.name}, {_id: trip.name, name: trip.name}, {upsert: true}, function(err) {
+  var tripId = slug(trip.name);
+  db.collection('trips').update({_id: tripId, name: trip.name}, {_id: tripId, name: trip.name}, {upsert: true}, function(err) {
     if (err) {
       return res.json(500, {name: err.name, msg: err.message});
     }
@@ -237,11 +239,11 @@ exports.saveTrip = function(req, res) {
     trip.paths.forEach(function(id) {
       pathIds.push(new ObjectID(id));
     });
-    db.collection('paths').update({_id: {$in: pathIds}}, {"$set": {"trip": trip.name}}, {"multi": true}, function(err, modified) {
+    db.collection('paths').update({_id: {$in: pathIds}}, {"$set": {"trip": tripId}}, {"multi": true}, function(err, modified) {
       if (err) {
         return res.json(500, {name: err.name, msg: err.message});
       }
-      console.log('set trip to ' + trip.name + ' on ' + modified + ' paths');
+      console.log('set trip to ' + tripId + ' on ' + modified + ' paths');
       return res.status(204).end();
     });
   });
