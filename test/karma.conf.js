@@ -24,7 +24,8 @@ module.exports = function(config) {
       'public/js/controllers/admin_controller.js',
       'test/client/spec/controllers/paths_controller.js',
       'test/client/spec/controllers/admin_controller.js',
-      'test/client/spec/services.js'
+      'test/client/spec/services/error_service.js',
+      'test/client/spec/services/paths_service.js'
     ],
 
     // list of files / patterns to exclude
