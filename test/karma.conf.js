@@ -17,6 +17,8 @@ module.exports = function(config) {
       'test/client/vendor/angular-mocks-1.2.6.js',
       'public/js/app.js',
       'public/js/services.js',
+      'public/js/services/error_service.js',
+      'public/js/services/paths_service.js',
       'public/js/controllers.js',
       'public/js/controllers/start_controller.js',
       'public/js/controllers/paths_controller.js',
