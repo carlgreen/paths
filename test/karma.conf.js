@@ -18,7 +18,12 @@ module.exports = function(config) {
       'public/js/app.js',
       'public/js/services.js',
       'public/js/controllers.js',
-      'test/client/spec/controllers.js',
+      'public/js/controllers/start_controller.js',
+      'public/js/controllers/paths_controller.js',
+      'public/js/controllers/map_controller.js',
+      'public/js/controllers/admin_controller.js',
+      'test/client/spec/controllers/paths_controller.js',
+      'test/client/spec/controllers/admin_controller.js',
       'test/client/spec/services.js'
     ],
 
@@ -60,7 +65,7 @@ module.exports = function(config) {
       // source files, that you wanna generate coverage for
       // do not include tests or libraries
       // (these files will be instrumented by Istanbul)
-      'public/js/*.js': ['coverage']
+      'public/js/**/*.js': ['coverage']
     },
 
     coverageReporter: {
