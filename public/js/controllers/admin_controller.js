@@ -34,9 +34,14 @@
       listFiles();
     };
 
+    var filesNotUploaded = function(response) {
+      var data = response.data;
+      ErrorService.add({msg: 'error uploading files', detail: data.name + ': ' + data.msg});
+    };
+
     $scope.doUploadFiles = function() {
       PathsService.uploadFiles($scope.uploadFiles).
-        then(filesUploaded);
+        then(filesUploaded, filesNotUploaded);
     };
 
     $scope.showTripView = false;
