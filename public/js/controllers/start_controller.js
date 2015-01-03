@@ -8,22 +8,27 @@
     'accessType': 'offline'
   };
 
-  angular.module('pathsControllers').controller('StartController', function($scope) {
+  angular.module('pathsControllers').controller('StartController', function($rootScope, $scope, $location, PathsService) {
 
     $scope.immediateFailed = true;
 
     var signIn = function(authResult) {
-      $scope.authResult = authResult;
       $scope.$apply(function() {
         $scope.processAuth(authResult);
       });
+    };
+
+    var signedIn = function(response) {
+      $rootScope.$broadcast('signedIn', response.data);
+      $location.path('/map');
     };
 
     $scope.processAuth = function(authResult) {
       /* jshint camelcase: false */
       if (authResult.access_token) {
         $scope.immediateFailed = false;
-        console.log('going well');
+        PathsService.connect(authResult)
+          .then(signedIn);
       } else if (authResult.error) {
         if (authResult.error === 'immediate_failed') {
           console.error('immediate failure');
