@@ -10,14 +10,12 @@ describe('Controller: PathsController', function() {
     pathsService,
     $q,
     $rootScope,
-    $httpBackend,
     queryDeferred;
 
   // Initialize the controller and a mock scope
-  beforeEach(inject(function(_$q_, _$rootScope_, _$httpBackend_, $controller) {
+  beforeEach(inject(function(_$q_, _$rootScope_, $controller) {
     $q = _$q_;
     $rootScope = _$rootScope_;
-    $httpBackend = _$httpBackend_;
     scope = $rootScope.$new();
     queryDeferred = undefined;
     pathsService = {
