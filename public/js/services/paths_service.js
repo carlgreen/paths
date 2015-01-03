@@ -53,8 +53,12 @@
       xhr.onreadystatechange = function () {
         $rootScope.$apply(function () {
           if (xhr.readyState === 4) {
+            var data = xhr.response;
+            if (/json/.test(xhr.getResponseHeader('content-type'))) {
+              data = JSON.parse(data);
+            }
             var r = {
-              data: xhr.response,
+              data: data,
               status: xhr.status,
               headers: xhr.getResponseHeader,
               config: {}
