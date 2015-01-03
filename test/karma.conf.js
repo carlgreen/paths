@@ -25,6 +25,7 @@ module.exports = function(config) {
       'public/js/controllers/map_controller.js',
       'public/js/controllers/admin_controller.js',
       'test/client/spec/controllers/paths_controller.js',
+      'test/client/spec/controllers/start_controller.js',
       'test/client/spec/controllers/admin_controller.js',
       'test/client/spec/services/error_service.js',
       'test/client/spec/services/paths_service.js'

@@ -21,16 +21,11 @@ describe('Controller: PathsController', function() {
     scope = $rootScope.$new();
     queryDeferred = undefined;
     pathsService = {
-      connect: function(/*authResult*/) {
-        queryDeferred = $q.defer();
-        return queryDeferred.promise;
-      },
       disconnect: function() {
         queryDeferred = $q.defer();
         return queryDeferred.promise;
       }
     };
-    spyOn(pathsService, 'connect').andCallThrough();
     spyOn(pathsService, 'disconnect').andCallThrough();
 
     PathsController = $controller('PathsController', {
@@ -41,43 +36,6 @@ describe('Controller: PathsController', function() {
 
   it('should have a PathsController', function() {
     expect(PathsController).toBeDefined();
-  });
-
-  it('should attach the result of connect to the scope', function() {
-    /* jshint camelcase: false */
-    expect(scope.userProfile).toBeUndefined();
-
-    scope.processAuth({access_token: 'abc123'});
-
-    queryDeferred.resolve({data: 'xyz'});
-    $rootScope.$apply();
-
-    expect(pathsService.connect).toHaveBeenCalledWith({access_token: 'abc123'});
-    expect(scope.userProfile).toBe('xyz');
-  });
-
-  it('should not set the user profile when connect fails', function() {
-    /* jshint camelcase: false */
-    scope.processAuth({access_token: 'abc123'});
-
-    queryDeferred.reject({status: 500});
-    $rootScope.$apply();
-
-    expect(scope.userProfile).toBeUndefined();
-  });
-
-  it('should call PathsService.connect when processAuth has an access token', function() {
-    scope.processAuth({'access_token': 'abc'});
-
-    expect(scope.immediateFailed).toBe(false);
-    expect(pathsService.connect).toHaveBeenCalledWith({'access_token': 'abc'});
-  });
-
-  it('should call PathsService.connect when processAuth has an access token', function() {
-    scope.processAuth({error: 'immediate_failed'});
-
-    expect(scope.immediateFailed).toBe(true);
-    expect(pathsService.connect).not.toHaveBeenCalled();
   });
 
   it('should clear scope when disconnect succeeds', function() {
