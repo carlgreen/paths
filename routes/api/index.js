@@ -192,6 +192,9 @@ exports.uploadFiles = function(req, res) {
     }
     db.collection('files').insert(files, function(err, result) {
       if (err) {
+        console.log('error  inserting files');
+        console.log(err);
+        console.log(files);
         return res.json(500, {name: err.name, msg: err.message});
       }
       console.log('uploaded ' + result.length + ' files');
