@@ -13,7 +13,7 @@
     "csv-parse": "0.0.6",
     "express-session": "1.2.1",
     "multiparty": "4.0.0",
-    "googleapis": "0.7.0",
+    "googleapis": "59.0.0",
     "mongodb": "1.4.7",
     "slug": "0.8.0"
   },
