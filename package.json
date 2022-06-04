@@ -14,7 +14,7 @@
     "express-session": "1.2.1",
     "multiparty": "4.0.0",
     "googleapis": "59.0.0",
-    "mongodb": "1.4.7",
+    "mongodb": "3.1.13",
     "slug": "0.8.0"
   },
   "devDependencies": {
