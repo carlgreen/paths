@@ -42,18 +42,15 @@ module.exports = function(config) {
     // - Firefox
     // - Opera
     // - Safari (only Mac)
-    // - PhantomJS
     // - IE (only Windows)
     browsers: [
-      // 'Chrome',
-      'PhantomJS'
+      'ChromeHeadless',
     ],
 
     // Which plugins to enable
     plugins: [
       'karma-coverage',
       // 'karma-chrome-launcher',
-      'karma-phantomjs-launcher',
       'karma-jasmine',
       'karma-sinon'
     ],
