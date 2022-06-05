@@ -7,8 +7,10 @@ var fs = require('fs'),
   mongo_util = require('../../app/mongo_util'),
   slug = require('slug');
 
+const { OAuth2Client } = require('google-auth-library');
+
 var REDIRECT_URL = 'postmessage';
-var oauth2Client = new googleapis.OAuth2Client(process.env.CLIENT_ID, process.env.CLIENT_SECRET, REDIRECT_URL);
+var oauth2Client = new OAuth2Client(process.env.CLIENT_ID, process.env.CLIENT_SECRET, REDIRECT_URL);
 
 var db;
 
