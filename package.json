@@ -44,7 +44,7 @@
     "should": "~4.0.4",
     "sinon": "~1.10.3",
     "supertest": "^6.2.3",
-    "time-grunt": "~1.0.0"
+    "time-grunt": "~2.0.0"
   },
   "scripts": {
     "test": "grunt test",
